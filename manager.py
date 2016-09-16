@@ -5,7 +5,6 @@
 import datetime
 import time
 from voglogger import logger
-from authorized import whoIs
 import pymongo
 
 # establish connection to mongodb server
@@ -218,6 +217,4 @@ def updater(cg, name, field, content, requester):
     return reply
 
 
-
-
-
+from authorized import whoIs

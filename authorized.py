@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import re
-# import manager
 """
     user management for ACGLBOT
 """
@@ -111,3 +110,5 @@ def groupIsValid(group_list):
         if group not in groups:
             return False
     return True
+
+import manager
