@@ -10,13 +10,10 @@ from telepot.delegate import per_chat_id, create_open
 
 # modules
 from settings_secret import TOKEN
-from botlogger import logger
+from voglogger import logger
 import authorized
 import helper
-import easter
-import withinus
 import manager
-import video
 
 def getTime():
     return datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S, %d %B %Y ')

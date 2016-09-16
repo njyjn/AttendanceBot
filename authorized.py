@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import re
-import manager
+# import manager
 """
     user management for ACGLBOT
 """
