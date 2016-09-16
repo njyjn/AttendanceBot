@@ -43,7 +43,7 @@ cgs = ['MJ', 'VJA', 'VJB', 'TPJA', 'TPJB', 'TJ', 'DMH']
 """ 
     verifies if chat ID is superadmin
 """
-def isSuperadmin(chat_id)
+def isSuperadmin(chat_id):
     return chat_id == superadmin
 
 """
