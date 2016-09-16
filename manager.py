@@ -150,7 +150,7 @@ def getEnumerate(cg, requester):
             results = cgls.find( {'cg': target_cg} )
             
             # sort results
-            results.sort( [('name', 1) ] )
+            results.sort( [('name', 1)] )
     
             reply += status.title() + '\n'
     
@@ -183,7 +183,7 @@ def find(cg, pattern, requester):
         results = cgls.find( {'name': { '$regex': '.*' + pattern + '.*'}, 'cg': cg } )
     
         # sort results
-        results.sort( [ (('name', 1) ] )
+        results.sort( [ ('name', 1) ] )
 
         details = ['name', 'chatID']
     
