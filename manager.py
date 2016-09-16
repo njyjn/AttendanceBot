@@ -23,10 +23,11 @@ db = connection['ariadne']
 # collection
 cgls = db['cgls']
 cgs = db['cgs']
+tally = db['tally']
 
 ### helper functions ###
 def cgIsValid(cg):
-    cg = {
+    cgs = {
         'mj': True,
         'tpja': True,
         'tpjb': True,
@@ -34,15 +35,26 @@ def cgIsValid(cg):
         'vjb': True,
         'tj': True,
         'dmh': True,
-        'all': True,
     }
     return cgs.get(cg, False)
 
-def fieldIsValid(field):
+def cglFieldIsValid(field):
     fields = {
         'name': True,
         'cg': True,
         'chatID': True,
+    }
+    return fields.get(field, False)
+
+def cgFieldIsValid(field):
+    fields = {
+        'l': True, # Leaders
+        'ir': True, # Irregulars
+        'nc': True, # Newcomers
+        'f': True, # Freshies
+        'v': True, # Visitors
+        'nb': True, # New Believers
+        'total': True, # Total tally
     }
     return fields.get(field, False)
 
@@ -215,6 +227,67 @@ def updater(cg, name, field, content, requester):
             else:
                 reply += 'Invalid field.'
     return reply
+
+## CG functions
+# /updateAttendance
+def updateAttendance(cg, field, number):
+    if cgIsValid(cg):
+        if cgs.update_one( { 'name': cg }, { '$set': { field: number } } ) != None:
+            return True
+    return False
+
+def isAllSubmitted():
+    results = cgs.find( {'done': True } )
+    if results.count() == cgs.find( {} ).count():
+        updateGrandAttendance()
+        reset()
+        return True
+    return False
+
+def reset():
+    fieldList = ['l','f','ir','nb','nc','v','total']
+    for field in fieldList:
+        cgs.update( {}, { '$set': { { field: 0 }, { 'done': False } } } )
+
+# /updateGrandAttendance
+# This will update the total attendance for the cluster.
+def updateGrandAttendance():
+    date = time.strftime('%d/%m/%Y')
+    cgList = cgs.find( {} )
+    total, totalL, totalF, totalIR, totalNC, totalNB, totalV = 0
+    for cg in cgList:
+        total += cg['total']
+        totalL += cg['l']
+        totalF += cg['f']
+        totalIR += cg['ir']
+        totalNC += cg['nc']
+        totalNB += cg['nb']
+        totalV += cg['v']
+    tally.save( { 'date': date }, {'$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } } )
+
+def getCGFinalString(cg):
+    cgDoc = cgs.find_one( { 'name': cg } )
+    total = cgDoc['total']
+    leaders = cgDoc['l']
+    freshies = cgDoc['f']+',' if cgDoc['f'] != 0 else ''
+    ncs = cgDoc['nc']+',' if cgDoc['nc'] != 0 else ''
+    nbs = cgDoc['nb']+',' if cgDoc['nb'] != 0 else ''
+    irs = cgDoc['ir']+',' if cgDoc['ir'] != 0 else ''
+    visitors = cgDoc['v']+',' if cgDoc['v'] != 0 else ''
+    string = freshies + irs + ncs + visitors + nbs
+    string = rreplace(string, ', ', '', 1)
+    return 'East (%s): %d+%d (%s)' % (cg, total, leaders, string)
+
+def rreplace(s, old, new, occurrence):
+    li = s.rsplit(old, occurrence)
+    return new.join(li)
+
+# def printTally():
+#     date = time.strftime('%d/%m/%Y')
+#     tally.find_one( { 'date': date } )
+#     mjDoc = cgs.find_one( { 'name': 'mj' } )
+#     mj = '%d+%d (%s, %s, %s, %s, %s)' % (mjDoc['total'])
+#     return 'East (MJ): %s\nEast (VJ A): %s\nEast (VJ B): %s\nEast (TPJ A): %s\nEast (TPJ B): %s\nEast (TJ): %s\nEast (DHS): %s\nEAST TOTAL=%s\n' % (mj, vja, vjb, tpja, tpjb, tj, dmh, total)
 
 
 from authorized import whoIs
