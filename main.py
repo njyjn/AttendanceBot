@@ -53,8 +53,23 @@ class ACGLBOT(telepot.Bot):
         adminFlag = False
         
         # ================================ COMMANDS FOR ADMINS
+        # This is for superadministrators.
+        if authorized.isSuperadmin(chat_id):
+            if command == '/hannah':
+                adminFlag = True
+                reply('Hannah is wonderful <3')
+            elif command.startswith('/add'):
+                matches = re.match('\/add\s+([a-zA-Z ]+)\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)', command, re.IGNORECASE)
+                if matches is None:
+                    reply('Please follow the appropriate format: \'/start Their Name CG\'')
+                else:
+                    name = matches.group(1)
+                    cg = matches.group(2)
+                    added_message = '%s (%s) from %s has registered.' % (chat_id, name, cg) 
+                    logger.info(added_message)
+                    manager.add(cg.lower(), name.title(), chat_id)
+                    
         # This is for administrators.
-
         if authorized.isAdmin(chat_id):
             # /admin
             if command == '/admin':

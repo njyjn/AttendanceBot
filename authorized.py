@@ -40,6 +40,12 @@ cgs = ['MJ', 'VJA', 'VJB', 'TPJA', 'TPJB', 'TJ', 'DMH']
 #     lists = [getIDs(groups.get(group)) for group in groupList if group in groups]
 #     return [item for sublist in lists for item in sublist]
 
+""" 
+    verifies if chat ID is superadmin
+"""
+def isSuperadmin(chat_id)
+    return chat_id == superadmin
+
 """
     verifies if chat ID is admin
 """
