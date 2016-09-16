@@ -234,19 +234,6 @@ def updater(house, name, field, content, requester):
                 reply += 'Invalid field.'
     return reply
 
-## House functions
-
-# /addPoints
-def addPoints(house, points):
-    if houseIsValid(house):
-        current_points = ...
-        new_points = current_points + points
-        houses.update_one( {'name': house}, { '$set': { 'points': new_points } } ) # perform update
-            reply = 'Successfully added \'%d\' points to \'%s\' % (points, house, new_points)'
-        else:
-            reply = 'Invalid.'
-    return reply
-
 
 
 
