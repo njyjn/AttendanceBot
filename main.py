@@ -124,9 +124,11 @@ class ACGLBOT(telepot.Bot):
             else:
                 name = matches.group(1)
                 cg = matches.group(2)
-                logger.info('/name: %s is \'%s\' from \'%s\'' % (chat_id, name, cg))
-                manager.add(cg.lower(), name.title(), chat_id)
-                reply('Welcome. Enter /me to view your ID, or /help to see what you can do.')
+                request_message = '%s (%s) from %s wants to register.' % (chat_id, name, cg) 
+                logger.info(request_message)
+                # manager.add(cg.lower(), name.title(), chat_id)
+                manager.dm(self, authorized.superadmin, message, chat_id)
+                reply('Your registration has been forwarded to Justin (@njyjn) for processing. Please wait...')
         # otherwise it must be trying to talk to ARIADNE!
         else:
             reply('You are not registered. Contact Justin for more information.')

@@ -3,23 +3,25 @@
 import re
 import manager
 """
-    user management for AndreaBot
+    user management for ACGLBOT
 """
+
+superadmin = 87244565
 
 # dictionary for Telegram chat IDs
 address_book = {
 #   # admin
     'Justin'    : 87244565,     # oweek games
     'Justin2'   : 175212803,
-    'Test-Group': 
-    }
+    'Test-Group': 0,
+}
 
 rev_book = {v: k for k, v in address_book.items()}
 
 # user groups
 global groups
 groups = {
-    'admins'    : ['Justin', 'Darren'],
+    'admins'    : ['Justin'],
 }
 
 # cgs
