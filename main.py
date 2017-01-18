@@ -7,6 +7,7 @@ import re
 import telepot
 
 from telepot.delegate import per_chat_id, create_open
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
 
 # modules
 from settings_secret import TOKEN
@@ -42,6 +43,17 @@ class ACGLBOT(telepot.Bot):
             logger.info('Replied \'%s\' to %s' % (reply, chat_id))
             self.sendMessage(chat_id, reply)
 
+        def dm(target_id, message):
+            logger.info('%s messaged \'%s\' to %s' % (chat_id, reply, target_id))
+            self.sendMessage(target_id, message)
+
+        def request_add(target_id, message, to_add_cg, to_add_id, to_add_name):
+            logger.info('Superadmin attention was requested from %s' % (chat_id))
+            reply_markup = ReplyKeyboardMarkup(keyboard=[
+                [KeyboardButton(text='/add %s %s %s' % (to_add_cg, to_add_name, to_add_id))],['Reject'],
+                ],one_time_keyboard=True,)
+            self.sendMessage(target_id, message, reply_markup=reply_markup)
+
         # Groups cannot talk to the bot
         if chat_id < 0:
             return
@@ -56,15 +68,16 @@ class ACGLBOT(telepot.Bot):
                 adminFlag = True
                 reply('Hannah is wonderful <3')
             elif command.startswith('/add'):
-                matches = re.match('\/add\s+([a-zA-Z ]+)\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)', command, re.IGNORECASE)
+                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
-                    reply('Please follow the appropriate format: \'/start Their Name CG\'')
+                    reply('SUPERADMIN: Please follow the appropriate format: \'/add Their Name CG\'')
                 else:
-                    name = matches.group(1)
-                    cg = matches.group(2)
-                    added_message = '%s (%s) from %s has registered.' % (chat_id, name, cg) 
+                    cg = matches.group(1)
+                    target_id = matches.group(2)
+                    name = matches.group(3)
+                    added_message = 'Attempting to register %s (%s) into %s.' % (target_id, name, cg) 
                     logger.info(added_message)
-                    manager.add(cg.lower(), name.title(), chat_id)
+                    manager.add(cg.lower(), name.title(), target_id)
                     
         # This is for administrators.
         if authorized.isAdmin(chat_id):
@@ -102,9 +115,9 @@ class ACGLBOT(telepot.Bot):
         # /stop
         if command == '/stop':
             if manager.removeByID(chat_id):
-                reply('You have been purged. Goodbye.')
+                reply('Goodbye.')
             else:
-                reply('You are not a citizen of Forena.')
+                reply('You cannot stop what you did not begin.')
             return
         
         # ================================ COMMANDS FOR REGISTERED USERS
@@ -139,7 +152,7 @@ class ACGLBOT(telepot.Bot):
                 request_message = '%s (%s) from %s wants to register.' % (chat_id, name, cg) 
                 logger.info(request_message)
                 # manager.add(cg.lower(), name.title(), chat_id)
-                manager.dm(self, authorized.superadmin, message, chat_id)
+                request_add(authorized.superadmin, request_message, cg, name, chat_id)
                 reply('Your registration has been forwarded to Justin (@njyjn) for processing. Please wait...')
         # otherwise it must be trying to talk to ARIADNE!
         else:
