@@ -56,8 +56,8 @@ def isAdmin(chat_id):
 """
     verifies if chat ID is registered
 """
-def isRegistered(chat_id):
-    return manager.exists(chat_id) 
+def isRegistered(check_id):
+    return manager.exists(check_id) 
 
 
 """
