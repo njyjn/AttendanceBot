@@ -9,12 +9,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 Install pip
 ```
-apt install pip
+apt install pip3
 ```
 
 Install Python
 ```
-apt install python
+apt install python3
 ```
 
 Install Telepot framework
@@ -22,21 +22,34 @@ Install Telepot framework
 pip install telepot
 ```
 
-Install MongoDB
-* Coming soon
+Install MongoDB - instructions vary, refer to your server guide on how to.
 
 Install pymongo
 ```
 pip install pymongo
 ```
 
-### Installation
-
-Coming soon
-
 ## Deployment
 
-Coming soon
+You may use any Python engine to host your bot. I used Digital Ocean with a Linux distro.
+
+1. Run the bot using 
+```
+python3 main.py
+```
+&nbsp;
+2. Run the database using
+```
+mongod --dbpath directory/to/database
+```
+&nbsp;
+3. To access your database console at any time, use
+```
+mongo acglbot 
+```
+_This assumes you have used **acglbot** as the name of the database._
+
+Highly recommend for to use [screen](https://remysharp.com/2015/04/27/screen) to run main.py in the background. This enables you to switch terminals at anytime while preserving the functionality of the bot, and also prevent you from losing access to your bot in case you lose connection to the terminal.
 
 ## Contributors
 
