@@ -9,8 +9,7 @@ import pymongo
 
 # establish connection to mongodb server
 try:
-    connection = pymongo.MongoClient('monty', 27017)
-
+    connection = pymongo.MongoClient('localhost', 27017)
 except pymongo.errors.ConnectionFailure as e:
     logger.error('Failed to connect to MongoDB: %s' % e)
     logger.error('ARIADNE exiting!')
@@ -18,7 +17,7 @@ except pymongo.errors.ConnectionFailure as e:
 
 # database -> collection -> document
 # database
-db = connection['ariadne']
+db = connection['acglbot']
 
 # collection
 cgls = db['cgls']
@@ -27,7 +26,7 @@ tally = db['tally']
 
 ### helper functions ###
 def cgIsValid(cg):
-    cgs = {
+    cg_dict = {
         'mj': True,
         'tpja': True,
         'tpjb': True,
@@ -36,7 +35,7 @@ def cgIsValid(cg):
         'tj': True,
         'dmh': True,
     }
-    return cgs.get(cg, False)
+    return cg_dict.get(cg, False)
 
 def cglFieldIsValid(field):
     fields = {
@@ -81,8 +80,8 @@ def enumerator(cursor, fields):
 def makeTimestamp():
     return datetime.datetime.fromtimestamp(time.time()).strftime('%I:%M%p, %d %B')
 
-def exists(chatID):
-    if cgls.find_one({'chatID': chatID}) == None:
+def exists(check_id):
+    if cgls.find({'chatID': check_id}) == None:
         return False
     return True
 
@@ -90,7 +89,7 @@ def exists(chatID):
 
 # Retrieve a singular cgl dictionary
 def get(chatID):
-    return cgls.find_one( {'chatID': chatID} )
+    return cgls.find( {'chatID': chatID} )
 
 def getMe(chatID):
     cgl = get(chatID)
@@ -124,9 +123,9 @@ def add(cg, name, chatID):
         }
 
         cgls.insert_one(cgl)
-        logger.info('Added \'%s\' of id %d to \'%s\' cg' % (chatID, name, cg))
+        logger.info('Added %d of id \'%s\' to \'%s\' cg' % (chatID, name, cg))
         return
-    logger.info('/add query failed (invalid parameters)')
+    logger.info('/add failed (CG does not exist)')
     return
 
 # /remove
@@ -215,7 +214,7 @@ def updater(cg, name, field, content, requester):
 
     if cgIsValid(cg):
         # check if result was found
-        if cgls.find_one( {'name': name, 'cg':cg} ) == None:
+        if cgls.find( {'name': name, 'cg':cg} ) == None:
             # no results
             reply += 'Could not find \'%s\' from \'%s\' cg.' % (name, cg)
         else:
