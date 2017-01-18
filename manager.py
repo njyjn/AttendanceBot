@@ -81,23 +81,23 @@ def makeTimestamp():
     return datetime.datetime.fromtimestamp(time.time()).strftime('%I:%M%p, %d %B')
 
 def exists(check_id):
-    if cgls.find({'chatID': check_id}) == None:
+    if cgls.find_one( {'chatID': str(check_id)} ) == None:
         return False
     return True
 
 ### executive functions ###
 
 # Retrieve a singular cgl dictionary
-def get(chatID):
-    return cgls.find( {'chatID': chatID} )
+def retrieve(check_id):
+    return cgls.find_one( {'chatID': str(check_id)} )
 
 def getMe(chatID):
-    cgl = get(chatID)
-    return 'You are ' + cgl['name'].title() + ' from ' + cgl['cg'].title() + '.\n\nContact @njyjn if not correct.'
+    cgl = retrieve(chatID)
+    return 'You are ' + cgl['name'].title() + ' from ' + cgl['cg'][0].upper() + '.\n\nContact @njyjn if not correct.'
 
 def getName(chatID):
     try:
-        return get(chatID).get('name')
+        return retrieve(chatID).get('name')
     except:
         return 'Unregistered user'
 
