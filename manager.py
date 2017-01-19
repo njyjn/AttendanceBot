@@ -101,6 +101,11 @@ def getName(chatID):
     except:
         return 'Unregistered user'
 
+def getCG(chatID):
+    try:
+        return retrieve(chatID).get('cg')[0]
+    except:
+        return 'Unregistered user'
 
 # /add
 def add(cg, name, chatID):
@@ -231,9 +236,7 @@ def updater(cg, name, field, content, requester):
 # /updateAttendance
 def updateAttendance(cg, field, number):
     if cgIsValid(cg):
-        if cgs.update_one( { 'name': cg }, { '$set': { field: number } } ) != None:
-            return True
-    return False
+        return cgs.update_one( { 'name': cg }, { '$set': { field: str(number) } }, upsert=True )
 
 def isAllSubmitted():
     results = cgs.find( {'done': True } )
@@ -265,17 +268,17 @@ def updateGrandAttendance():
     tally.save( { 'date': date }, {'$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } } )
 
 def getCGFinalString(cg):
-    cgDoc = cgs.find_one( { 'name': cg } )
+    cgDoc = cgs.find_one( { 'name': cg.lower() } )
     total = cgDoc['total']
     leaders = cgDoc['l']
-    freshies = cgDoc['f']+',' if cgDoc['f'] != 0 else ''
-    ncs = cgDoc['nc']+',' if cgDoc['nc'] != 0 else ''
-    nbs = cgDoc['nb']+',' if cgDoc['nb'] != 0 else ''
-    irs = cgDoc['ir']+',' if cgDoc['ir'] != 0 else ''
-    visitors = cgDoc['v']+',' if cgDoc['v'] != 0 else ''
+    freshies = cgDoc['f']+'F, ' if cgDoc['f'] != 0 else ''
+    ncs = cgDoc['nc']+'NC, ' if cgDoc['nc'] != 0 else ''
+    nbs = cgDoc['nb']+'NB, ' if cgDoc['nb'] != 0 else ''
+    irs = cgDoc['ir']+'IR, ' if cgDoc['ir'] != 0 else ''
+    visitors = cgDoc['v']+'V, ' if cgDoc['v'] != 0 else ''
     string = freshies + irs + ncs + visitors + nbs
     string = rreplace(string, ', ', '', 1)
-    return 'East (%s): %d+%d (%s)' % (cg, total, leaders, string)
+    return 'East (%s): %s+%s (%s)' % (cg.upper(), total, leaders, string)
 
 def rreplace(s, old, new, occurrence):
     li = s.rsplit(old, occurrence)

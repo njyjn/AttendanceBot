@@ -6,15 +6,17 @@ import datetime
 import re
 import telepot
 
-from telepot.delegate import per_chat_id, create_open, pave_event_space
-from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
+from telepot.delegate import (
+    per_chat_id, create_open, pave_event_space, include_callback_query_chat_id, per_callback_query_origin)
+from telepot.namedtuple import (
+    ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply, InlineKeyboardMarkup, InlineKeyboardButton)
+import telepot.helper
 
 # modules
 from settings_secret import TOKEN
 from voglogger import logger
-import authorized
-import helper
-import manager
+from headmaster import question_limit, question_bank, question_order
+import authorized, helper, manager
 
 def getTime():
     return datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S, %d %B %Y ')
@@ -31,11 +33,23 @@ class ACGLBOT(telepot.helper.ChatHandler):
         super(ACGLBOT, self).__init__(*args, **kwargs)
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
+        self._progress = 0
+        self._query_cg = None
+
+        self.track_reply = False
 
     def on_chat_message(self, message):
         content_type, chat_type, chat_id = telepot.glance(message)
 
         command = message['text']
+        # For headmaster to track replies from /count sequence
+        try:
+            reply_source_message_id = (message['reply_to_message'])['message_id']
+            headcount_input = (message['text'])
+        except:
+            reply_source_message_id = None
+            headcount_input = -1
+
         logger.info('Received \'%s\' from \'%s\' (%s)' % (command, manager.getName(chat_id), chat_id) )
 
         # To save time
@@ -127,20 +141,77 @@ class ACGLBOT(telepot.helper.ChatHandler):
         # ================================ COMMANDS FOR REGISTERED USERS
         # This is for registered participants
         if authorized.isRegistered(chat_id):
-            # /help [<command>]
-            if command == '/help':
-                reply(helper.getNaiveHelp())
-            elif command.startswith('/help'):
-                keyword = re.match('\s*/help\s+([a-z]+)\s*', command).group(1)
-                reply(helper.getHelp(keyword))
-            # /retrieve_key
-            elif command == '/retrieve_key':
-                reply(str(chat_id))
-            # /me
-            elif command == '/me':
-                reply(manager.getMe(chat_id))
+            # Tracking Headmaster queries
+            if self.track_reply:
+                if self._query_cg == None:
+                    self._query_cg = manager.getCG(chat_id)
+
+                try:
+                    manager.updateAttendance(self._query_cg, question_order[self._progress], int(command)) 
+                except ValueError:
+                    reply('NaN. Restart.')
+                    self.close()
+                self._progress += 1
+                if self._progress >= question_limit:
+                    self.sender.sendMessage(str(manager.getCGFinalString(self._query_cg)))
+                    self.close()
+                # otherwise send the next question
+                self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
+
+            
             else:
-                reply('Unknown command.')
+                # /help [<command>]
+                if command == '/help':
+                    reply(helper.getNaiveHelp())
+                elif command.startswith('/help'):
+                    keyword = re.match('\s*/help\s+([a-z]+)\s*', command).group(1)
+                    reply(helper.getHelp(keyword))
+                # /retrieve_key
+                elif command == '/retrieve_key':
+                    reply(str(chat_id))
+                # /me
+                elif command == '/me':
+                    reply(manager.getMe(chat_id))
+
+                elif command == '/count':
+                    # self.sender.sendMessage('Shall we begin?',
+                    #     reply_markup=InlineKeyboardMarkup(
+                    #         inline_keyboard=[[
+                    #             InlineKeyboardButton(text='Ok', callback_data='start'),
+                    #         ]]
+                    #     )
+                    # )
+                    # self.close()
+                    _progress = 0
+                    self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
+                    self.track_reply = True
+
+                # Handles replies from Headmaster
+                # elif reply_source_message_id != None:
+                #     if self._query_cg == None:
+                #         self._query_cg = manager.getCG(chat_id).lower()
+                #         logging.info(self._query_cg)
+
+                #     if self._progress >= question_limit:
+                #         self.sender.sendMessage(str(manager.getCGFinalString(self._query_cg), reply_markup=None))
+                #         _progress = 0
+                #         self.close()
+
+                #     if headcount_input == -1:
+                #         reply('NaN. Restart.')
+                #         self.close()
+                    
+                #     try:
+                #         if manager.updateAttendance(self._query_cg, question_order[self._progress], int(headcount_input)):
+                #             logging.info('Database updated.')
+                #         self._progress += 1
+                #         self.sender.sendMessage(str(question_bank.get(question_order[self._progress])), reply_markup=
+                #             ForceReply(force_reply=True))
+                #     except ValueError:
+                #         reply('NaN. Restart.')
+                #         self.close()
+                else:
+                    reply('Unknown command.')
         
         # ================================ COMMANDS FOR UNREGISTERED USERS
         # for '/start'
@@ -163,6 +234,45 @@ class ACGLBOT(telepot.helper.ChatHandler):
             reply('You are not registered. Contact Justin for more information.')
         return
 
+# class HeadmasterManager(telepot.helper.CallbackQueryOriginHandler):
+#     def __init__(self, *args, **kwargs):
+#         super(HeadmasterManager, self).__init__(*args, **kwargs)
+#         self._query_cg = None
+#         self._progress = 0
+#         query_id = None
+
+#     def _show_next_question(self, from_id):
+#         question = question_bank.get(str(question_order[self._progress]))            
+#         bot.sendMessage(from_id, str(question), reply_markup=ForceReply(
+#             force_reply=True))
+#         self._progress += 1
+
+#     def on_chat_message(self, message):
+#         query_id, from_id, query_data = telepot.glance(message, flavor='callback_query')
+
+#         if self._query_cg == None:
+#             self._query_cg = manager.getCG(from_id)
+
+#         if self._progress >= question_limit:
+#             self.editor.editMessageText(str(getCGFinalString(self._query_cg), reply_markup=None))
+#             self.close()
+
+#         manager.updateAttendance(self._query_cg, question_order[self._progress], query_data) 
+#         self._show_next_question(from_id)
+
+#     def on_callback_query(self, message):
+#         query_id, from_id, query_data = telepot.glance(message, flavor='callback_query')
+
+#         if self._query_cg == None:
+#             self._query_cg = manager.getCG(from_id)
+
+#         if self._progress >= question_limit:
+#             self.editor.editMessageText(str(manager.getCGFinalString(self._query_cg), reply_markup=None))
+#             self.close()
+
+#         manager.updateAttendance(self._query_cg, question_order[self._progress], query_data) 
+#         self._show_next_question(from_id)
+
 #logger.info('ACGLBOT is listening ...')
 
 #bot = ACGLBOT(TOKEN)
@@ -172,8 +282,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
     #time.sleep(500)
 
 bot = telepot.DelegatorBot(TOKEN, [
-    pave_event_space()(
-        per_chat_id(), create_open, ACGLBOT, timeout=20
-    ),
+        pave_event_space()(
+            per_chat_id(), create_open, ACGLBOT, timeout=120),
+        # pave_event_space()(
+        #     per_callback_query_origin(), create_open, HeadmasterManager, timeout=60),
 ])
 bot.message_loop(run_forever="ACGLBOT is listening ...")
