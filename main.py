@@ -16,7 +16,7 @@ import telepot.helper
 from settings_secret import TOKEN
 from voglogger import logger
 from headmaster import question_limit, question_bank, question_order
-import authorized, helper, manager
+import authorized, helper, manager, easter
 
 def getTime():
     return datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S, %d %B %Y ')
@@ -220,7 +220,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 #         reply('NaN. Restart.')
                 #         self.close()
                 else:
-                    reply('Unknown command.')
+                    reply(easter.responseHandler(command))
         
         # ================================ COMMANDS FOR UNREGISTERED USERS
         # for '/start'

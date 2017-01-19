@@ -1,5 +1,6 @@
 # Local hidden files
 settings_secret.py
+easter.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
