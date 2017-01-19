@@ -33,9 +33,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
         super(ACGLBOT, self).__init__(*args, **kwargs)
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
+        
         self._progress = 0
         self._query_cg = None
-
         self.track_reply = False
 
     def on_chat_message(self, message):
@@ -143,22 +143,30 @@ class ACGLBOT(telepot.helper.ChatHandler):
         if authorized.isRegistered(chat_id):
             # Tracking Headmaster queries
             if self.track_reply:
+                # Obtain CG at first run.
                 if self._query_cg == None:
                     self._query_cg = manager.getCG(chat_id)
-
+                # Throw warning messages if user exits halfway through.
+                if command == 'exit':
+                    if self._progress == 0:
+                        reply('/count process interrupted. Your data is safe.')
+                    else:
+                        reply('/count process interrupted. Your data is corrupted. Please try again.')
+                    self.close()
+                # Edit each field of the attendance as we go along.
                 try:
                     manager.updateAttendance(self._query_cg, question_order[self._progress], int(command)) 
                 except ValueError:
-                    reply('NaN. Restart.')
+                    reply('NaN. Your data is corrupted. Please restart.')
                     self.close()
                 self._progress += 1
+                # Complete method if all fields have been populated.
                 if self._progress >= question_limit:
                     self.sender.sendMessage(str(manager.getCGFinalString(self._query_cg)))
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
 
-            
             else:
                 # /help [<command>]
                 if command == '/help':
@@ -183,7 +191,8 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     # )
                     # self.close()
                     _progress = 0
-                    self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
+                    reply('WARNING: You will potentially override existing data if you do not go through with the full procedure. If so, type exit to leave now.')
+                    reply(str(question_bank.get(question_order[self._progress])))
                     self.track_reply = True
 
                 # Handles replies from Headmaster
