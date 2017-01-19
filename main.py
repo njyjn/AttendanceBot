@@ -6,7 +6,7 @@ import datetime
 import re
 import telepot
 
-from telepot.delegate import per_chat_id, create_open
+from telepot.delegate import per_chat_id, create_open, pave_event_space
 from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
 
 # modules
@@ -25,8 +25,8 @@ def groupArg2List(groupList):
     else:
         return re.split('\s*+\s*', groupList)
 
-#class ACGLBOT(telepot.helper.ChatHandler):
-class ACGLBOT(telepot.Bot):
+class ACGLBOT(telepot.helper.ChatHandler):
+#class ACGLBOT(telepot.Bot):
     def __init__(self, *args, **kwargs):
         super(ACGLBOT, self).__init__(*args, **kwargs)
         self._answerer = telepot.helper.Answerer(self)
@@ -41,18 +41,22 @@ class ACGLBOT(telepot.Bot):
         # To save time
         def reply(reply):
             logger.info('Replied \'%s\' to %s' % (reply, chat_id))
-            self.sendMessage(chat_id, reply)
+            #self.sendMessage(chat_id, reply)
+            self.sender.sendMessage(reply)
 
         def dm(target_id, message):
             logger.info('%s messaged \'%s\' to %s' % (chat_id, reply, target_id))
-            self.sendMessage(target_id, message)
+            #self.sendMessage(target_id, message)
+            bot.sendMessage(target_id, message)
 
         def request_add(target_id, message, to_add_cg, to_add_id, to_add_name):
             logger.info('Superadmin attention was requested from %s' % (chat_id))
             reply_markup = ReplyKeyboardMarkup(keyboard=[
                 [KeyboardButton(text='/add %s %s %s' % (to_add_cg, to_add_name, to_add_id))],['Reject'],
                 ],one_time_keyboard=True,)
-            self.sendMessage(target_id, message, reply_markup=reply_markup)
+            #self.sendMessage(target_id, message, reply_markup=reply_markup)
+            bot.sendMessage(target_id, message, reply_markup=reply_markup)
+
 
         # Groups cannot talk to the bot
         if chat_id < 0:
@@ -159,12 +163,17 @@ class ACGLBOT(telepot.Bot):
             reply('You are not registered. Contact Justin for more information.')
         return
 
-logger.info('ACGLBOT is listening ...')
+#logger.info('ACGLBOT is listening ...')
 
-bot = ACGLBOT(TOKEN)
-bot.message_loop()
+#bot = ACGLBOT(TOKEN)
+#bot.message_loop()
 
-#bot = telepot.DelegatorBot(TOKEN, [(per_chat_id(), create_open(ARIADNEbot, timeout=120)),])
+#while 1:
+    #time.sleep(500)
 
-while 1:
-    time.sleep(500)
+bot = telepot.DelegatorBot(TOKEN, [
+    pave_event_space()(
+        per_chat_id(), create_open, ACGLBOT, timeout=20
+    ),
+])
+bot.message_loop(run_forever="ACGLBOT is listening ...")
