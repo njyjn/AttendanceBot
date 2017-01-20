@@ -34,6 +34,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
         
+        # for headmaster
         self._progress = 0
         self._query_cg = None
         self.track_reply = False
@@ -205,14 +206,23 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     self.close()
                 # Edit each field of the attendance as we go along.
                 try:
-                    manager.updateAttendance(self._query_cg, question_order[self._progress], int(command)) 
-                except ValueError:
-                    reply('NaN. Your data is corrupted. Please restart.')
+                    count = int(command)
+                    if count < 0:
+                        raise Exception('Think positive only.')
+                    manager.updateAttendance(self._query_cg, question_order[self._progress], count) 
+                except Exception as e:
+                    reply(str(e))
+                    reply('Your data is corrupted. Please restart /count.')
                     self.close()
                 self._progress += 1
                 # Complete method if all fields have been populated.
                 if self._progress >= question_limit:
                     self.sender.sendMessage(str(manager.getCGFinalString(self._query_cg)))
+                    if manager.setAttendanceDoneForEvent(self._query_cg):
+                        reply('Congratulations! You are the last to submit your attendance. Here you go ~')
+                        reply(manager.submitGrandAttendance())
+                    else:
+                        reply('Congratulations! You are not the last to submit your attendance. Peace.')
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
@@ -232,6 +242,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     reply(manager.getMe(chat_id))
 
                 elif command == '/count':
+                    if not manager.eventDoesNotExist() and not manager.eventHasEnded():
                     # self.sender.sendMessage('Shall we begin?',
                     #     reply_markup=InlineKeyboardMarkup(
                     #         inline_keyboard=[[
@@ -240,10 +251,12 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     #     )
                     # )
                     # self.close()
-                    _progress = 0
-                    reply('WARNING: You will potentially override existing data if you do not go through with the full procedure. If so, type exit to leave now.')
-                    reply(str(question_bank.get(question_order[self._progress])))
-                    self.track_reply = True
+                        _progress = 0
+                        reply('WARNING: You will potentially override existing data if you do not go through with the full procedure. If so, type exit to leave now.')
+                        reply(str(question_bank.get(question_order[self._progress])))
+                        self.track_reply = True
+                    else:
+                        reply('No one is counting attendance now. You may wish to do other productive things.')
 
                 # Handles replies from Headmaster
                 # elif reply_source_message_id != None:
