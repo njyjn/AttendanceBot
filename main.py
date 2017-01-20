@@ -16,7 +16,7 @@ import telepot.helper
 from settings_secret import TOKEN
 from voglogger import logger
 from headmaster import question_limit, question_bank, question_order
-import authorized, helper, manager, easter
+import authorized, helper, manager, easter, broadcaster
 
 def getTime():
     return datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S, %d %B %Y ')
@@ -62,6 +62,10 @@ class ACGLBOT(telepot.helper.ChatHandler):
             logger.info('%s messaged \'%s\' to %s' % (chat_id, reply, target_id))
             #self.sendMessage(target_id, message)
             bot.sendMessage(target_id, message)
+
+        def yell(message):
+            broadcaster.yell('all', message, chat_id) 
+            logger.info('%s yelled by %s.' % message, (str(chat_id)))
 
         def request_add(target_id, message, to_add_cg, to_add_id, to_add_name):
             logger.info('Superadmin attention was requested from %s' % (chat_id))
