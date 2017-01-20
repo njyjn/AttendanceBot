@@ -87,56 +87,102 @@ class ACGLBOT(telepot.helper.ChatHandler):
         # This is for superadministrators.
         if authorized.isSuperadmin(chat_id):
             if command == '/hannah':
-                adminFlag = True
                 reply('Hannah is wonderful <3')
+            
             elif command.startswith('/add'):
                 matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
-                    reply('SUPERADMIN: Please follow the appropriate format: \'/add Their Name CG\'')
+                    reply('SUPERADMIN: Please follow the appropriate format: \'/add chat_id Their Name\'')
                 else:
                     cg = matches.group(1)
                     target_id = matches.group(2)
                     name = matches.group(3)
                     added_message = 'Attempting to register %s (%s) into %s.' % (target_id, name, cg) 
                     logger.info(added_message)
-                    manager.add(cg.lower(), name.title(), target_id)
-                    
+                    bot.sendMessage(target_id, manager.add(cg.lower(), name.title(), target_id))
+                    logger.info('Succesfully registered %s (%s) into %s.' % (target_id, name, cg))
+                    reply('%s (%s) added' % (name, cg))
+
+            elif command.startswith('/rm'):
+                matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                if matches is None:
+                    reply('SUPERADMIN: Please follow the appropriate format: \'/rm CG Their Name')
+                else:
+                    cg = matches.group(1)
+                    name = matches.group(2)
+                    rm_message = 'Attempting to remove %s from %s.' %  (name, cg)
+                    logger.info(rm_message)
+                    manager.remove(cg, name, chat_id)
+
+            elif command == '/event clear':
+                reply(manager.forceDeleteEvent())
+                return
+
         # This is for administrators.
         if authorized.isAdmin(chat_id):
             # /admin
             if command == '/admin':
                 adminFlag = True
                 reply('You are an admin. Commands available:\n/admin - View this\n/yell AUDIENCE: MSG\n/ls - Show all users in database\n/find FROM NAME - Show list of names you are finding.\n/update HOUSE NAME FIELD PARAM\n/purge HOUSE NAME\n/scoreb - Show scoreboard\n/award HOUSE POINTS')
+            
             elif command.startswith('/update'):
                 if command == '/update':
                     reply('/update HOUSE NAME FIELD PARAM')
                     return
                 else:
-                    adminFlag = True 
+                    adminFlag = True
                     house, name, field, content = re.match('/update\s+([a-zA-Z]+)\s+([a-zA-Z\s]+)\s+(name|type)\s+([a-zA-Z]+)\s*' ,command).groups()
                     reply(manager.updater(house.lower(), name.title(), field.lower(), content.lower(), chat_id))
+            
             elif command.startswith('/ls'):
-                adminFlag = True
                 if command == '/ls':
-                    reply('Did you mean /ls la?\n\nla: List all users\nhouse: List all listeners in house') 
+                    reply('Did you mean /ls la?\n\nla: List all users\ncg: List all users in cg')
+                    return
                 elif command == '/ls la':
+                    adminFlag = True
                     reply(manager.getEnumerate('all', chat_id))
                 else:
-                    house = re.match('/ls\s([a-zA-Z]+)', command).group(1)
-                    reply(manager.getEnumerate(house, chat_id))
+                    adminFlag = True
+                    cg = re.match('/ls\s([a-zA-Z]+)', command).group(1).lower()
+                    reply(manager.getEnumerate(cg, chat_id))
+            
             elif command.startswith('/find'):
-               adminFlag == True
-               if command == '/find':
-                   reply('Enter a search param!')
-               else:
-                   house,name = re.match('/find\s([a-zA-Z]+)\s([a-zA-Z]+)', command).groups()
-                   reply(manager.find(house.lower(), name.title(), chat_id))
+                if command == '/find':
+                    reply('Enter search params!')
+                    return
+                else:
+                    adminFlag = True
+                    house,name = re.match('/find\s([a-zA-Z]+)\s([a-zA-Z\s]+)', command).groups()
+                    reply(manager.find(cg.lower(), name.title(), chat_id))
+
+            elif command.startswith('/event'):
+                if command == '/event':
+                    reply('Use format \'/event new Event Name\' or \'/event end\' or \'/event reopen\'')
+                    return
+                elif command == '/event reopen':
+                    adminFlag = True
+                    reply(manager.reopenEvent())
+                    broadcaster.yell(bot, 'all', 'Attendance taking reopened.', chat_id)
+                elif command == '/event end':
+                    adminFlag = True
+                    reply(manager.forceEndEvent())
+                    broadcaster.yell(bot, 'all', 'Attendance taking has ended.', chat_id)
+                elif command.startswith('/event new'):
+                    adminFlag = True
+                    event_name = command.replace('/event new ', '')
+                    reply(manager.raiseEvent(event_name))
+                    broadcaster.yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
+                else:
+                    reply('Improper parameters supplied for /event')
+                    return
+            
             if adminFlag == True:
                 reply('System ready.')
                 return
+        
         # /stop
         if command == '/stop':
-            if manager.removeByID(chat_id):
+            if manager.removeById(chat_id):
                 reply('Goodbye.')
             else:
                 reply('You cannot stop what you did not begin.')

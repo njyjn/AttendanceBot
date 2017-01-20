@@ -1,6 +1,3 @@
-import telepot
-from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
-
 question_bank = {
 	'total': 'How many youths came today, total?',
 	'l': 'How many servers including yourself?',
