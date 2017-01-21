@@ -291,7 +291,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
         # ================================ COMMANDS FOR UNREGISTERED USERS
         # for '/start'
         elif command == '/start':
-            reply('Hello there. Please enter \'/start Full Name CG\'\n\nEg: /start Justin Ng TJ')
+            reply('Hello there. Please enter \'/start Full Name CG\'\n\nEg: /start Justin Ng TJ\n\nAbbrev:\nTPJC A - tpja\nTPJC B - tpjb\nDHS - dmh')
         elif command.startswith('/start'):
             matches = re.match('\/start\s+([a-zA-Z ]+)\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)', command, re.IGNORECASE)
             if matches is None:
