@@ -143,12 +143,12 @@ def add(cg, name, chatID):
 # /remove
 def remove(cg, name, requester):
     reply = 'Removed \'%s\' of \'%s\' cg from database.' % (name, cg)
-
+    name = name.title()
     # perform remove
     if cgls.find( {'name': name, 'cg': cg }).count() == 0:
         return 'No such record found.'
-    elif cgls.find( {'name': name, 'cg': cg }).count() == 1:
-        cgls.delete_one( {'name': name, 'cg': cg}, 1 )
+    elif cgls.find( {'name': name, 'cg': cg }).count() >= 1:
+        cgls.delete_one( {'name': name, 'cg': cg} )
         logger.info(whoIs(requester) + ': ' + reply)
         return reply
 
