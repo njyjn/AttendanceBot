@@ -115,7 +115,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     name = matches.group(2)
                     rm_message = 'Attempting to remove %s from %s.' %  (name, cg)
                     logger.info(rm_message)
-                    manager.remove(cg, name, chat_id)
+                    reply(manager.remove(cg, name, chat_id))
                     return
 
             elif command == '/event clear':
