@@ -185,7 +185,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     return
                 adminFlag = True
                 message = command.replace('/yell ', '')
-                yell(str(message))
+                broadcaster.yell(bot, 'all', str(message), chat_id)
                 reply('Message yelled to all.')
 
             if adminFlag == True:
