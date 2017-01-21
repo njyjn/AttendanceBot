@@ -179,7 +179,15 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 else:
                     reply('Improper parameters supplied for /event')
                     return
-            
+            elif command.startswith('/yell'):
+                if command == ('/yell'):
+                    reply('/yell what?')
+                    return
+                adminFlag = True
+                message = command.replace('/yell ', '')
+                yell(str(message))
+                reply('Message yelled to all.')
+
             if adminFlag == True:
                 reply('System ready.')
                 return
