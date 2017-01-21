@@ -89,6 +89,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
         if authorized.isSuperadmin(chat_id):
             if command == '/hannah':
                 reply('Hannah is wonderful <3')
+                return
             
             elif command.startswith('/add'):
                 matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
@@ -103,6 +104,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     bot.sendMessage(target_id, manager.add(cg.lower(), name.title(), target_id))
                     logger.info('Succesfully registered %s (%s) into %s.' % (target_id, name, cg))
                     reply('%s (%s) added' % (name, cg))
+                    return
 
             elif command.startswith('/rm'):
                 matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
@@ -114,6 +116,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     rm_message = 'Attempting to remove %s from %s.' %  (name, cg)
                     logger.info(rm_message)
                     manager.remove(cg, name, chat_id)
+                    return
 
             elif command == '/event clear':
                 reply(manager.forceDeleteEvent())
