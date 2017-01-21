@@ -6,10 +6,11 @@ from datetime import datetime, timedelta
 import time
 from voglogger import logger
 import pymongo
+from settings_secret import HOSTNAME
 
 # establish connection to mongodb server
 try:
-    connection = pymongo.MongoClient('localhost', 27017)
+    connection = pymongo.MongoClient(HOSTNAME, 27017)
 except pymongo.errors.ConnectionFailure as e:
     logger.error('Failed to connect to MongoDB: %s' % e)
     logger.error('ARIADNE exiting!')
