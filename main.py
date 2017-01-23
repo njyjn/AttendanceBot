@@ -38,6 +38,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
         self._progress = 0
         self._query_cg = None
         self.track_reply = False
+        self._first_try = False
 
     def on_chat_message(self, message):
         content_type, chat_type, chat_id = telepot.glance(message)
@@ -115,7 +116,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     name = matches.group(2)
                     rm_message = 'Attempting to remove %s from %s.' %  (name, cg)
                     logger.info(rm_message)
-                    manager.remove(cg, name, chat_id)
+                    reply(manager.remove(cg, name, chat_id))
                     return
 
             elif command == '/event clear':
@@ -174,8 +175,12 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command.startswith('/event new'):
                     adminFlag = True
                     event_name = command.replace('/event new ', '')
+                    if manager.eventDoesNotExist():
+                        broadcaster.yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
                     reply(manager.raiseEvent(event_name))
-                    broadcaster.yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
+                elif command == '/event report':
+                    adminFlag = True
+                    reply(manager.printGrandTally())
                 else:
                     reply('Improper parameters supplied for /event')
                     return
@@ -215,6 +220,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     else:
                         reply('/count process interrupted. Your data is corrupted. Please try again.')
                     self.close()
+                # Check if user is counting for the first time.
+                if self._progress == 0:
+                    self._first_try = manager.isFirstTry(self._query_cg)
                 # Edit each field of the attendance as we go along.
                 try:
                     count = int(command)
@@ -229,11 +237,11 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 # Complete method if all fields have been populated.
                 if self._progress >= question_limit:
                     self.sender.sendMessage(str(manager.getCGFinalString(self._query_cg)))
-                    if manager.setAttendanceDoneForEvent(self._query_cg):
+                    if manager.setAttendanceDoneForEvent(self._query_cg, self._first_try):
                         reply('Congratulations! You are the last to submit your attendance. Here you go ~')
-                        reply(manager.submitGrandAttendance())
                     else:
                         reply('Congratulations! You are not the last to submit your attendance. Peace.')
+                    reply(manager.submitGrandAttendance())
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))

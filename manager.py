@@ -316,12 +316,14 @@ def reopenEvent():
 def getEvents():
     return events.find( {} )
 
-def setAttendanceDoneForEvent(cg):
+def setAttendanceDoneForEvent(cg, isFirstTry):
+    logger.info('%s has added its attendance record.' % cg)
     isit = False
     if lastToSubmitAttendance():
         isit = True
-    events.update_one( { 'done': False }, { '$inc': { 'tally': 1 } } )
-    logger.info('%s has added its attendance record.' % cg)
+    # subsequent tries will not increment the tally count, allowing CGs to edit their attendance before all CGs have submitted.
+    if isFirstTry:
+        events.update_one( { 'done': False }, { '$inc': { 'tally': 1 } } )
     return isit
 
 def lastToSubmitAttendance():
@@ -338,7 +340,7 @@ def submitGrandAttendance():
 # /updateAttendance
 def updateAttendance(cg, field, number):
     if cgIsValid(cg):
-        return cgs.update_one( { 'name': cg }, { '$set': { field: str(number) } }, upsert=True )
+        cgs.update_one( { 'name': cg }, { '$set': { field: str(number) } }, upsert=True )
 
 def isAllSubmitted():
     results = cgs.find( {'done': True } )
@@ -347,6 +349,9 @@ def isAllSubmitted():
         reset()
         return True
     return False
+
+def isFirstTry(cg):
+    return cgs.find_one( { 'name': cg } ) == None
 
 def reset():
     # fieldList = ['l','f','ir','nb','nc','v','total']
@@ -381,11 +386,11 @@ def getCGFinalString(cg):
 def getFinalString(cgDoc, cg=None):
     total = str(cgDoc['total'])
     leaders = str(cgDoc['l'])
-    freshies = str(cgDoc['f'])+'F, ' if cgDoc['f'] != '0' else ''
-    ncs = str(cgDoc['nc'])+'NC, ' if cgDoc['nc'] != '0' else ''
-    nbs = str(cgDoc['nb'])+'NB, ' if cgDoc['nb'] != '0' else ''
-    irs = str(cgDoc['ir'])+'IR, ' if cgDoc['ir'] != '0' else ''
-    visitors = str(cgDoc['v'])+'V, ' if cgDoc['v'] != '0' else ''
+    freshies = str(cgDoc['f'])+'F, ' if not cgDoc['f'] in ('0',0) else ''
+    ncs = str(cgDoc['nc'])+'NC, ' if not cgDoc['nc'] in ('0',0) else ''
+    nbs = str(cgDoc['nb'])+'NB, ' if not cgDoc['nb'] in ('0',0) else ''
+    irs = str(cgDoc['ir'])+'IR, ' if not cgDoc['ir'] in ('0',0) else ''
+    visitors = str(cgDoc['v'])+'V, ' if not cgDoc['v'] in ('0',0) else ''
     string = freshies + irs + ncs + visitors + nbs
     string = rreplace(string, ', ', '', 1)
     if cg != None:
