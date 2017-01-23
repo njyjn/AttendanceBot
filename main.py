@@ -174,8 +174,12 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command.startswith('/event new'):
                     adminFlag = True
                     event_name = command.replace('/event new ', '')
+                    if manager.eventDoesNotExist():
+                        broadcaster.yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
                     reply(manager.raiseEvent(event_name))
-                    broadcaster.yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
+                elif command == '/event report':
+                    adminFlag = True
+                    reply(manager.printGrandTally())
                 else:
                     reply('Improper parameters supplied for /event')
                     return
@@ -234,6 +238,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                         reply(manager.submitGrandAttendance())
                     else:
                         reply('Congratulations! You are not the last to submit your attendance. Peace.')
+                    reply(manager.submitGrandAttendance())
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
