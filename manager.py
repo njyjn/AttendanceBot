@@ -7,6 +7,7 @@ import time
 from voglogger import logger
 import pymongo
 from settings_secret import HOSTNAME
+from tools import rreplace
 
 # establish connection to mongodb server
 try:
@@ -400,10 +401,6 @@ def getFinalString(cgDoc, cg=None):
     if string == '':
         return '%s: %s+%s' % (cluster_and_cg,  total, leaders)
     return '%s: %s+%s (%s)' % (cluster_and_cg, total, leaders, string)
-
-def rreplace(s, old, new, occurrence):
-    li = s.rsplit(old, occurrence)
-    return new.join(li)
 
 def printGrandTally():
     total = getFinalString(tally.find_one( { } ))
