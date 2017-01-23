@@ -16,6 +16,7 @@ import telepot.helper
 from settings_secret import TOKEN
 from voglogger import logger
 from headmaster import question_limit, question_bank, question_order
+from tools import rreplace
 import authorized, helper, manager, easter, broadcaster
 
 def getTime():
@@ -309,20 +310,35 @@ class ACGLBOT(telepot.helper.ChatHandler):
         elif command == '/start':
             reply('Hello there. Please enter \'/start Full Name CG\'\n\nEg: /start Justin Ng TJ\n\nAbbrev:\nTPJC A - tpja\nTPJC B - tpjb\nDHS - dmh')
         elif command.startswith('/start'):
-            matches = re.match('\/start\s+([a-zA-Z ]+)\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)', command, re.IGNORECASE)
+            regex_pattern = '\/start\s+([a-zA-Z ]+)\s+(' 
+
+            # extract all given cgs in authorized into a regex id pattern
+            for cg in authorized.cg_list:
+                regex_pattern += cg + '|'
+            regex_pattern = rreplace(regex_pattern, '|', ')', 1)
+
+            matches = re.match(regex_pattern, command, re.IGNORECASE)
             if matches is None:
                 reply('Please follow the appropriate format: \'/start Your Name CG\'')
             else:
-                name = matches.group(1)
-                cg = matches.group(2)
-                request_message = '%s (%s) from %s wants to register.' % (chat_id, name, cg) 
+                name = matches.group(1).title()
+                cg = matches.group(2).lower()
+
+                # map CG to appropriate cluster
+                cluster = authorized.getCluster(cg)
+                approver_id = authorized.address_book[cluster]
+
+                request_message = '%s (%s) from %s, %s wants to register.' % (chat_id, name, cluster, cg) 
                 logger.info(request_message)
-                # manager.add(cg.lower(), name.title(), chat_id)
+                
+                # ask rep to approve registration
                 request_add(authorized.superadmin, request_message, cg, name, chat_id)
-                reply('Your registration has been forwarded to Justin (@njyjn) for processing. Please wait...')
+                request_add(approver_id, request_message, cg, name, chat_id)
+                reply('Your registration has been forwarded to your cluster rep for processing. Please wait...')
+
         # otherwise it must be trying to talk to ARIADNE!
         else:
-            reply('You are not registered. Contact Justin for more information.')
+            reply('You are not registered. Contact Justin (@njyjn) for more information.')
         return
 
 # class HeadmasterManager(telepot.helper.CallbackQueryOriginHandler):
