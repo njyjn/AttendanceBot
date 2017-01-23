@@ -7,6 +7,7 @@ import time
 from voglogger import logger
 import pymongo
 from settings_secret import HOSTNAME
+import authorized
 from tools import rreplace
 
 # establish connection to mongodb server
@@ -329,9 +330,10 @@ def setAttendanceDoneForEvent(cg, isFirstTry):
 
 def lastToSubmitAttendance():
     cursor = events.find_one( { 'done': False } )
-    cgList = ['mj','vja','vjb','tpja','tpjb','tj','dmh']
-    #cgList = ['tj', 'dmh']
-    return cursor['tally'] >= (len(cgList)-1)
+    cg_list = authorized.cg_list
+    #cg_list = ['mj','vja','vjb','tpja','tpjb','tj','dmh']
+    #cg_list = ['tj', 'dmh']
+    return cursor['tally'] >= (len(cg_list)-1)
 
 def submitGrandAttendance():
     updateGrandAttendance()

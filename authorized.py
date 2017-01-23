@@ -4,30 +4,37 @@ import re
 """
     user management for ACGLBOT
 """
-
 superadmin = 87244565
 
 # dictionary for Telegram chat IDs
 address_book = {
-#   # admin
+    # admin
     'Justin'    : 87244565,     # oweek games
     'Justin2'   : 175212803,
     'Test-Group': 0,
 }
-
 rev_book = {v: k for k, v in address_book.items()}
 
 # user groups
 global groups
 groups = {
-    'admins'    : ['Justin'],
+    'admins'    : ['Justin', 'jce'],
 }
 
 # cgs
-cgs = ['MJ', 'VJA', 'VJB', 'TPJA', 'TPJB', 'TJ', 'DMH']
+#cgs = ['MJ', 'VJA', 'VJB', 'TPJA', 'TPJB', 'TJ', 'DMH']
+#cg_list = ['mj','vja','vjb','tpja','tpjb','tj','dmh']
+#cluster_list = ['jce', 'jcwu', 'jcwac', 'jcn', 'jcs']
+
+cg_cluster_dictionary = {
+    'jce': ['mj','vja','vjb','tpja','tpjb','tj','dmh'],
+    'jcs': ['cj/sota', 'saa', 'sab'],
+}
+cluster_list = cg_cluster_dictionary.keys()
+cg_list = [item for sublist in [v for k, v in cg_cluster_dictionary.items()] for item in sublist]
 
 # """
-#     returns a list of chat IDs of all listening to yells
+# returns a list of chat IDs of all listening to yells
 # """
 # def getMailingList():
 #     return list(set(getGroups(['cvogls', 'fopcomm', 'admins', 'safety', 'ogls', 'oweek'])))
@@ -75,6 +82,11 @@ def whoIs(target_id):
     else:
         return target_id
 
+"""
+    return the cluster that the cg belongs to
+"""
+def getCluster(cg):
+    return ''.join([k for k, v in cg_cluster_dictionary.items() if cg in v])
 # """
 #     enumerates all names inside address_book
 #     for /who command
