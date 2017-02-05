@@ -54,6 +54,7 @@ Highly recommend for to use [screen](https://remysharp.com/2015/04/27/screen) to
 ## Understanding the code
 We use Telepot, a Python API for Telegram, by Nick Lee (credit below). Telepot adds an extra layer of simplification for us.
 
+### Webhooks
 Telegram provides webhooks for bots to latch onto their servers. It is different from classic polling in the sense that messages are 'pushed' to the bot from the server, on demand. So the bot will not have to waste resources querying Telegram servers 24/7 and users can get responses as and when they talk to it.
 
 <center>Telegram client --> Telegram server <-- Bot in cloud</center>
@@ -66,6 +67,7 @@ bot = telepot.DelegatorBot(TOKEN, [
         ...
 ```
 
+### DelegatorBot
 AttendanceBot makes use of Telepot's `DelegatorBot` to handle chat events. Each user is given a session with the bot, which expires after 120s of inactivity. This can be modified in this chunk at the bottom:
 
 ```
@@ -76,6 +78,7 @@ bot = telepot.DelegatorBot(TOKEN, [
 ])
 ```
 
+### Receiving messages
 When a user talks to the bot, `on_chat_message()` API method is activated. AttendanceBot uses a series of `if-elif-else` nests to determine what the user is trying to get it to do. An example below: 
 
 ```
@@ -87,10 +90,13 @@ elif command.startswith('/start'):
     ... 
 ```
 
-Remember that AttendanceBot exists primarily to assist in the collection of attendance. Different methods are being called from different parts of the code (refer to [Structure](#Structure)), and we `import` them right at the top of `main.py` for use.
+### External methods
+Remember that AttendanceBot exists primarily to assist in the collection of attendance. Different methods are being called from different parts of the codebase, which may not be in the same file (refer to [structure](#structure). We `import` them right at the top of `main.py` for use.
 
+### Database
 AttendanceBot uses a Mongo database in the cloud to keep track of everything. Database features will be explained in the future.
 
+### Sending replies
 AttendanceBot, being a bot, must issue replies to users. It can even broadcast messages, but that is beyond the scope of this readme. To reply, the `reply()` method is defined as such:
 
 ```
