@@ -32,17 +32,7 @@ events.create_index('end', expireAfterSeconds=0)
 
 ### helper functions ###
 def cgIsValid(cg):
-    cg_dict = {
-        'all': True,
-        'mj': True,
-        'tpja': True,
-        'tpjb': True,
-        'vja': True,
-        'vjb': True,
-        'tj': True,
-        'dmh': True,
-    }
-    return cg_dict.get(cg, False)
+    return cg in authorized.cg_list
 
 def cglFieldIsValid(field):
     fields = {
@@ -167,7 +157,7 @@ def getEnumerate(cg, requester):
 
         # cover the all case and single cg case
         if cg == 'all':
-            cgs = ['mj', 'vja', 'vjb', 'tpja', 'tpjb', 'tj', 'dmh']
+            cgs = authorized.cg_list
         else:
             cgs = [cg]
 
@@ -335,20 +325,22 @@ def lastToSubmitAttendance():
     #cg_list = ['tj', 'dmh']
     return cursor['tally'] >= (len(cg_list)-1)
 
-def submitGrandAttendance():
-    updateGrandAttendance()
+def submitGrandAttendance(cg):
+    cluster = authorized.getCluster(cg)
+    updateGrandAttendance(cluster)
     return printGrandTally()
 
 ## CG functions
 # /updateAttendance
 def updateAttendance(cg, field, number):
     if cgIsValid(cg):
-        cgs.update_one( { 'name': cg }, { '$set': { field: str(number) } }, upsert=True )
+        cluster = authorized.getCluster(cg)
+        cgs.update_one( { '$and': [ {'name': cg}, {'cluster': cluster} ] }, { '$set': { field: str(number) } }, upsert=True )
 
-def isAllSubmitted():
-    results = cgs.find( {'done': True } )
-    if results.count() == cgs.find( {} ).count():
-        updateGrandAttendance()
+def isAllSubmitted(cluster):
+    results = cgs.find( { '$and': [ {'done': True }, {'cluster': cluster} ] } )
+    if results.count() == cgs.find( { 'cluster': cluster } ).count():
+        updateGrandAttendance(cluster)
         reset()
         return True
     return False
@@ -365,8 +357,8 @@ def reset():
 
 # /updateGrandAttendance
 # This will update the total attendance for the cluster.
-def updateGrandAttendance():
-    cgList = cgs.find( {} )
+def updateGrandAttendance(cluster):
+    cgList = cgs.find( {'cluster': cluster} )
     total = totalL = totalF = totalIR = totalNC = totalNB = totalV = 0
     for cg in cgList:
         total += int(cg['total'])
@@ -376,36 +368,61 @@ def updateGrandAttendance():
         totalNC += int(cg['nc'])
         totalNB += int(cg['nb'])
         totalV += int(cg['v'])
-    tally.update( {}, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } }, upsert=True )
+    tally.update_one( { 'cluster': cluster }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } }, upsert=True )
 
 # produces a string for individual cg records, format:
 # East (TJ): 30+3 (5F, 1NC, 2NB, 6IR)
 def getCGFinalString(cg):
+    cluster = authorized.getCluster(cg.lower())
+    clusterFS = authorized.getClusterFriendlyString(cluster)
     cgDoc = cgs.find_one( { 'name': cg.lower() } )
     if cgDoc == None:
-        return 'East (%s):' % cg.upper()
+        return '%s (%s):' % (clusterFS.title(), cg.upper())
     return getFinalString(cgDoc, cg)
 
-def getFinalString(cgDoc, cg=None):
-    total = str(cgDoc['total'])
-    leaders = str(cgDoc['l'])
-    freshies = str(cgDoc['f'])+'F, ' if not cgDoc['f'] in ('0',0) else ''
-    ncs = str(cgDoc['nc'])+'NC, ' if not cgDoc['nc'] in ('0',0) else ''
-    nbs = str(cgDoc['nb'])+'NB, ' if not cgDoc['nb'] in ('0',0) else ''
-    irs = str(cgDoc['ir'])+'IR, ' if not cgDoc['ir'] in ('0',0) else ''
-    visitors = str(cgDoc['v'])+'V, ' if not cgDoc['v'] in ('0',0) else ''
-    string = freshies + irs + ncs + visitors + nbs
-    string = rreplace(string, ', ', '', 1)
-    if cg != None:
-        cluster_and_cg = 'East (%s)' % cg.upper()
+def getFinalString(cgDoc, cg=None, clusterFS=None):
+    total = leaders = string = ''
+    if cgDoc != None:
+        clusterFS = authorized.getClusterFriendlyString(cgDoc['cluster'])
+        total = str(cgDoc['total'])
+        leaders = str(cgDoc['l'])
+        freshies = str(cgDoc['f'])+'F, ' if not cgDoc['f'] in ('0',0) else ''
+        ncs = str(cgDoc['nc'])+'NC, ' if not cgDoc['nc'] in ('0',0) else ''
+        nbs = str(cgDoc['nb'])+'NB, ' if not cgDoc['nb'] in ('0',0) else ''
+        irs = str(cgDoc['ir'])+'IR, ' if not cgDoc['ir'] in ('0',0) else ''
+        visitors = str(cgDoc['v'])+'V, ' if not cgDoc['v'] in ('0',0) else ''
+        string = freshies + irs + ncs + visitors + nbs
+        string = rreplace(string, ', ', '', 1)
     else:
-        cluster_and_cg = 'EAST TOTAL'
+        clusterFS = authorized.getClusterFriendlyString(clusterFS)
+    if cg != None:
+        cluster_and_cg = '%s (%s)' % (clusterFS.title(), cg.upper())
+    else:
+        cluster_and_cg = '%s TOTAL' % clusterFS.upper()
+    if cgDoc == None:
+        return '%s:' % cluster_and_cg
     if string == '':
         return '%s: %s+%s' % (cluster_and_cg,  total, leaders)
     return '%s: %s+%s (%s)' % (cluster_and_cg, total, leaders, string)
 
 def printGrandTally():
-    total = getFinalString(tally.find_one( { } ))
+    northTotal = getFinalString(tally.find_one( {'cluster': 'jcn'} ), None, 'jcn')
+    ajyj = getCGFinalString('aj/yj')
+    sr = getCGFinalString('sr')
+    nyej = getCGFinalString('ny/ej')
+    rja = getCGFinalString('rja')
+    rjbsji = getCGFinalString('rjb/sji')
+    rjc = getCGFinalString('rjc')
+    ij = getCGFinalString('ij')
+    north = '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (ajyj, sr, nyej, rja, rjbsji, rjc, ij, northTotal)
+
+    southTotal = getFinalString(tally.find_one( {'cluster': 'jcs'} ), None, 'jcs')
+    cjsota = getCGFinalString('cj/sota')
+    saa = getCGFinalString('sa a')
+    sab = getCGFinalString('sa b')
+    south = '%s\n%s\n%s\n%s\n' % (cjsota, saa, sab, southTotal)
+
+    eastTotal = getFinalString(tally.find_one( {'cluster': 'jce'} ), None, 'jce')
     mj = getCGFinalString('mj')
     vja = getCGFinalString('vja')
     vjb = getCGFinalString('vjb')
@@ -413,7 +430,8 @@ def printGrandTally():
     tpjb = getCGFinalString('tpjb')
     tj = getCGFinalString('tj')
     dmh = getCGFinalString('dmh')
-    return '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (mj, vja, vjb, tpja, tpjb, tj, dmh, total)
+    east = '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (mj, vja, vjb, tpja, tpjb, tj, dmh, eastTotal)
 
+    return '%s\n%s\n%s' % (north, south, east)
 
 from authorized import whoIs

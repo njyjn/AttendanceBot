@@ -11,6 +11,7 @@ address_book = {
     # admin
     'Justin'    : 87244565,     # oweek games
     'Justin2'   : 175212803,
+    'jce'       : 62199558,     # choy
     'Test-Group': 0,
 }
 rev_book = {v: k for k, v in address_book.items()}
@@ -18,7 +19,7 @@ rev_book = {v: k for k, v in address_book.items()}
 # user groups
 global groups
 groups = {
-    'admins'    : ['Justin', 'jce'],
+    'admins'    : ['Justin', 'jce', 'jcs', 'jcn'],
 }
 
 # cgs
@@ -28,10 +29,21 @@ groups = {
 
 cg_cluster_dictionary = {
     'jce': ['mj','vja','vjb','tpja','tpjb','tj','dmh'],
-    'jcs': ['cj/sota', 'saa', 'sab'],
+    'jcs': ['cj/sota', 'sa a', 'sa b'],
+    'jcn': ['aj/yj', 'sr', 'ny/ej', 'rja', 'rjb/sji', 'rjc', 'ij'],
 }
 cluster_list = cg_cluster_dictionary.keys()
 cg_list = [item for sublist in [v for k, v in cg_cluster_dictionary.items()] for item in sublist]
+
+cluster_fs_dictionary = {
+    'jce': 'East',
+    'jcs': 'South',
+    'jcwu': 'West',
+    'jcwul': 'West United',
+    'jcwa': 'West',
+    'jcwal': 'West ACIB',
+    'jcn': 'North',
+}
 
 # """
 # returns a list of chat IDs of all listening to yells
@@ -87,6 +99,10 @@ def whoIs(target_id):
 """
 def getCluster(cg):
     return ''.join([k for k, v in cg_cluster_dictionary.items() if cg in v])
+
+def getClusterFriendlyString(cluster):
+    return ''.join(cluster_fs_dictionary.get(cluster))
+
 # """
 #     enumerates all names inside address_book
 #     for /who command

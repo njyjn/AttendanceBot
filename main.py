@@ -94,9 +94,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 return
             
             elif command.startswith('/add'):
-                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\/SOTA|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
-                    reply('SUPERADMIN: Please follow the appropriate format: \'/add chat_id Their Name\'')
+                    reply('SUPERADMIN: Please follow the appropriate format: \'/add cg chat_id Their Name\'')
                 else:
                     cg = matches.group(1)
                     target_id = matches.group(2)
@@ -109,7 +109,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     return
 
             elif command.startswith('/rm'):
-                matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\/SOTA|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
                     reply('SUPERADMIN: Please follow the appropriate format: \'/rm CG Their Name')
                 else:
@@ -242,7 +242,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                         reply('Congratulations! You are the last to submit your attendance. Here you go ~')
                     else:
                         reply('Congratulations! You are not the last to submit your attendance. Peace.')
-                    reply(manager.submitGrandAttendance())
+                    reply(manager.submitGrandAttendance(self._query_cg))
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
