@@ -105,7 +105,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     logger.info(added_message)
                     bot.sendMessage(target_id, manager.add(cg.lower(), name.title(), target_id))
                     logger.info('Succesfully registered %s (%s) into %s.' % (target_id, name, cg))
-                    reply('%s (%s) added' % (name, cg))
+                    reply('%s (%s) added' % (name, cg.upper()))
                     return
 
             elif command.startswith('/rm'):
@@ -198,6 +198,11 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 reply('System ready.')
                 return
         
+        # /24601
+        if command == '/24601':
+            reply(str(chat_id))
+            return
+
         # /stop
         if command == '/stop':
             if manager.removeById(chat_id):
@@ -306,9 +311,15 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     reply(easter.responseHandler(command))
         
         # ================================ COMMANDS FOR UNREGISTERED USERS
+        # for '/cg'
+        elif command == '/cg':
+            reply('Use the following CG abbreviation codes:')
+            reply('\n'.join(str(x) for x in authorized.cg_list))
         # for '/start'
         elif command == '/start':
-            reply('Hello there. Please enter \'/start Full Name CG\'\n\nEg: /start Justin Ng TJ\n\nAbbrev:\nTPJC A - tpja\nTPJC B - tpjb\nDHS - dmh')
+            reply('Hello there. Please enter \'/start Full Name CG\'\n\nEg: /start Alethea Sim TJ\n')
+            reply('For full list of CG abbreviations type in /cg')
+            reply('Please note that currently only JC East, North and South may use this system.')
         elif command.startswith('/start'):
             regex_pattern = '\/start\s+([a-zA-Z ]+)\s+(' 
 
@@ -319,7 +330,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
 
             matches = re.match(regex_pattern, command, re.IGNORECASE)
             if matches is None:
-                reply('Please follow the appropriate format: \'/start Your Name CG\'')
+                reply('Either you did not follow the appropriate format: \'/start Your Name CG\' or you did not use the correct CG code. (/cg)')
             else:
                 name = matches.group(1).title()
                 cg = matches.group(2).lower()
@@ -338,7 +349,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
 
         # otherwise it must be trying to talk to ARIADNE!
         else:
-            reply('You are not registered. Contact Justin (@njyjn) for more information.')
+            reply('You are not registered. Hit /start or contact Justin (@njyjn) for more information.')
         return
 
 # class HeadmasterManager(telepot.helper.CallbackQueryOriginHandler):
