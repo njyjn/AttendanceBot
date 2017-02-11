@@ -36,6 +36,7 @@ If you have any questions, feedback or suggestions, do let my creator know on Te
 ---
 
 ## Getting started for admins
+
 Only cluster reps and above receive administratorship over ACGLBOT. Currently, they are
 
 | Cluster | Rep |
@@ -45,6 +46,10 @@ Only cluster reps and above receive administratorship over ACGLBOT. Currently, t
 | South | Sherry |
 | West United | TBC |
 | West ACIB | TBC |
+
+The registration procedure is the same as [above](#getting-started-for-users). Note that you may use **any CG** under your care for your registration (choose your favorite (-; ). 
+
+An additional step would be to enter `/24601` and inform @njyjn on Telegram of the reply so that he can add you to the admin system. 
 
 As an administrator you are the gatekeeper to a number of things:
 
