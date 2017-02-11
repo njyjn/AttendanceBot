@@ -202,7 +202,11 @@ class ACGLBOT(telepot.helper.ChatHandler):
         if command == '/24601':
             reply(str(chat_id))
             return
-
+        # /cg
+        if command == '/cg':
+            reply('Use the following CG abbreviation codes:')
+            reply('\n'.join(str(x) for x in authorized.cg_list))
+            return
         # /stop
         if command == '/stop':
             if manager.removeById(chat_id):
@@ -311,10 +315,6 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     reply(easter.responseHandler(command))
         
         # ================================ COMMANDS FOR UNREGISTERED USERS
-        # for '/cg'
-        elif command == '/cg':
-            reply('Use the following CG abbreviation codes:')
-            reply('\n'.join(str(x) for x in authorized.cg_list))
         # for '/start'
         elif command == '/start':
             reply('Hello there. Please enter \'/start Full Name CG\'\n\nEg: /start Alethea Sim TJ\n')
