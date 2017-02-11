@@ -32,7 +32,7 @@ events.create_index('end', expireAfterSeconds=0)
 
 ### helper functions ###
 def cgIsValid(cg):
-    return cg in authorized.cg_list
+    return cg in authorized.cg_list or cg == 'all'
 
 def cglFieldIsValid(field):
     fields = {
