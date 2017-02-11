@@ -1,155 +1,86 @@
 # AttendanceBot
-A Telegram bot which helps Caregroup Leaders in Arrow Ministry tabulate their group attendance.
+I am a Telegram bot which helps Caregroup Leaders in Arrow Ministry automatically tabulate their group attendance.
 
-## Getting Started
+- [User Guide](#getting-started-for-users)
+- [Admin Guide](#getting-started-for-admins)
+- [Developer Guide](#getting-started-for-developers)
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+## Getting started for users
 
-### Prerequisities
+**Hello, I am Arrow CGL Bot (ACGLBOT)!**
 
-Install pip
-```
-apt install pip3
-```
+I help you take attendance for Arrow events so that you can spend more time on what is truly important—your youths. Say goodbye to that copy/pasting/calculating race-to-not-be-last (my creator was always last).
 
-Install Python
-```
-apt install python3
-```
+I am so simple to use! To begin, enter `/start Your Name CG`. For example, if my name is **Alethea Sim** and I am from **TJC** (which is the best CG by the way), enter `/start Alethea Sim TJ`. Your CG's code may not be what you think it is. Check `/cg` to tell me the code that I can understand.
 
-Install Telepot framework
-```
-pip3 install telepot
-```
+Your Cluster Rep (CR) will approve your registration. If you do not receive an approval message within a minute, your CR may be swamped with friend requests at the moment... Try again! If you are ever asked for your 'chat id', hit `/24601` and give them the string of numbers. No, you aren't Jean Valjean unless your chat id is really 24601 to which inform @njyjn immediately.
 
-Install MongoDB - instructions vary, refer to your server guide on how to.
+When an Arrow event is taking place, you will receive a notifcation asking you to 'get /count-ing'. Yes! Do exactly that. Hit `/count` and follow the steps to the end.
 
-Install pymongo
-```
-pip3 install pymongo
-```
+If you need to make changes to your attendance, repeat `/count`. Complete the steps to the end; do not leave me hanging or your CG's data may be corrupted.
 
-## Deployment
+You will be notified if you are the last CG to submit attendance. To which I say to you, very good! You will have to copy and paste it into the **JC Updates** WhatsApp chat. Just so you know, WhatsApp and I aren't very good friends. In the future we won't even have to talk to it and I will let Pastor and our overseers know directly! Yay!
 
-You may use any Python engine to host your bot. I used Digital Ocean with a Linux distro.
+You may also talk to me if I am free, but I am a bot who does not understand the full range of your language. I will try my best to reply you. No more blue ticks and conversations leaving you wondering why you started it in the first place, ok?
 
-1. Run the bot using 
-```
-python3 main.py
-```
-&nbsp;
-2. Run the database using
-```
-mongod --dbpath directory/to/database
-```
-&nbsp;
-3. To access your database console at any time, use
-```
-mongo acglbot 
-```
-_This assumes you have used **acglbot** as the name of the database._
+Anytime that you have had it with me, you may click `/stop`, but that deregisters you from the system and your CR will have to add you in again when you hit `/start`. Let's save them the hassle and remain subscribed to me for as long as you are serving in Arrow.
 
-Highly recommend for to use [screen](https://remysharp.com/2015/04/27/screen) to run main.py in the background. This enables you to switch terminals at anytime while preserving the functionality of the bot, and also prevent you from losing access to your bot in case you lose connection to the terminal.
+If you have any questions, feedback or suggestions, do let my creator know on Telegram at @njyjn. God bless you :-)
 
-## Understanding the code
-We use Telepot, a Python API for Telegram, by Nick Lee (credit below). Telepot adds an extra layer of simplification for us.
+## Getting started for admins
+Only cluster reps and above receive administratorship over ACGLBOT. Currently, they are
 
-### Webhooks
-Telegram provides webhooks for bots to latch onto their servers. It is different from classic polling in the sense that messages are 'pushed' to the bot from the server, on demand. So the bot will not have to waste resources querying Telegram servers 24/7 and users can get responses as and when they talk to it.
+| Cluster | Rep |
+|---|---|
+| East | Choy (the handsome one)|
+| North | TBC |
+| South | Sherry |
+| West United | TBC |
+| West ACIB | TBC |
 
-<center>Telegram client --> Telegram server <-- Bot in cloud</center>
+As an administrator you are the gatekeeper to a number of things:
 
-All we need to do on our part is to set up the webhook, which Telepot's API handles for us neatly.
+### User management
+#### Registration 
+When a leader under your care registers, you will receive a message seeking your approval. A custom keyboard with a single button will appear, and all you have to do is to click on it. 
 
-```
-// main.py: TOKEN is a unique variable set in settings_secret.py and generated by the BotFather.
-bot = telepot.DelegatorBot(TOKEN, [
-        ...
-```
+In the event that multiple people are registering at the same time, the keyboard button may change and will not return to the previous user. So ask your leaders to take it slowly, k, slowly!
 
-### DelegatorBot
-AttendanceBot makes use of Telepot's `DelegatorBot` to handle chat events. Each user is given a session with the bot, which expires after 120s of inactivity. This can be modified in this chunk at the bottom:
+You may add them manually too. Use `/add cg chatID Name` using the `cg` code found in `/cg`, their `chatID` which is obtained when they enter `/24601`, and their `Name` which really is just their name and nothing more. Note the spaces which separate the parameters.
 
-```
-// main.py
-bot = telepot.DelegatorBot(TOKEN, [
-        pave_event_space()(
-            per_chat_id(), create_open, ACGLBOT, timeout=120),
-])
-```
+It is your onus to ensure that only your leaders register on the bot.
 
-### Receiving messages
-When a user talks to the bot, `on_chat_message()` API method is activated. AttendanceBot uses a series of `if-elif-else` nests to determine what the user is trying to get it to do. An example below: 
+#### Removal
+When a leader leaves your care, you have to inform the superadmin (@njyjn as of now) to remove them from the system. Or they could just hit `/stop`
 
-```
-main.py: User enters /start (...)
-if command == '/start':
-    reply('...')
-elif command.startswith('/start'):
-    regex_pattern = '\/start\s+([a-zA-Z ]+)\s+('
-    ... 
-```
+#### List
+You would know this if you have toyed with Unix systems before. You can retrieve a list of leaders under your care by hitting `/ls`. To list all users listening to me, hit `/ls la`. Otherwise, `/ls cg` where `cg` is the code I understand. (Check `/cg` if you are unsure)
 
-### External methods
-Remember that AttendanceBot exists primarily to assist in the collection of attendance. Different methods are being called from different parts of the codebase, which may not be in the same file (refer to [structure](#structure). We `import` them right at the top of `main.py` for use.
+### Event management 
+You are able to create events that kickoff attendance taking. Note that only one event may run at any given time, and all events automatically expire and self-destruct within 3 days.
 
-### Database
-AttendanceBot uses a Mongo database in the cloud to keep track of everything. Database features will be explained in the future.
+Attendance data is only stored within the aforementioned timeframe. We recommend that the practice of storing the final count in a safe place continues.
 
-### Sending replies
-AttendanceBot, being a bot, must issue replies to users. It can even broadcast messages, but that is beyond the scope of this readme. To reply, the `reply()` method is defined as such:
+#### Create
+`/event new Name of event` gets you started. Do this only once or I may whine!
 
-```
-def reply(reply):
-            logger.info('Replied \'%s\' to %s' % (reply, chat_id))
-            self.sender.sendMessage(reply)
-```
+#### Report
+`/event report` tells you the state of the count at the time you requested for it. In future iterations you will be automatically notified when the entire cluster has completed its attendance taking.
 
-As you can see, we are using `self.sender.sendMessage()` ('self' being the `DelegatorBot` initialized in `bot`, which really is from the Telepot API and beyond us to explain. All we need is to log the reply, and call `sendMessage()` to get it to the user. Broadcasting, as a tidbit, simply uses a `for` loop of `sendMessage()` methods to all users.
+#### End
+`/event end` ends the current counting event. Please do this only when the attendance taking is complete. Data is safe and you may reopen it within 3 days from the start.
 
-## Structure
-AttendanceBot runs mainly from `main.py`, hence we run the command `python3 main.py`. Other files serve the following purposes:
+#### Reopen
+`/event reopen` reopens the previous counting event, provided it has yet to self-destruct.
 
-| File | Function |
-| --- | --- |
-| `authorized.py` | Validates superadmins, admins. Also determines which cluster the CG belongs to, and their cluster representative. |
-| `botlogger.py` | Contains the logger logic. |
-| `broadcaster.py` | Assists in the broadcasting (mass send) of messages. |
-| `easter.py` | Generates the correct reponse when users talk to the bot casually. `easter_example.py` was provided. Modify the response dictionaries according to your liking. |
-| `headmaster.py` | Contains the question bank for attendance taking, and decides the order they are shown. |
-| `helper.py` | Logic to handle `/help` commands written here. |
-| `main.py` | Handles the reply logic. |
-| `manager.py` | All code related to database CRUD (Create, Read, Update, Delete) is found here and only here. (SRP) |
-| `settings_secret.py` | Contains your secret tokens. Modify `settings_secret_example.py` and roll. **DO NOT PUBLISH THIS ON GIT.** |
-| `tools.py` | Helper tools for string replace, substitution, et cetera. |
-| `voglogger.py` | A script which allows for saving of logs to files. Imported from Darren's VOGLBot and currently not used. |
+#### Clear
+`/event clear` removes data from the system. WARNING: You may not retrieve cleared attendance data.
 
-AttendanceBot has the following functionality which makes it a little different from the typical Telegram bot.
+### Communications
+`/yell Your message here` sends 'Your message here' to all listening users. Use only if important.
 
-1. Only registered users who are approved may use the bot. Upon registration, a request is sent to the CGL's cluster rep for case-by-case approval. Implements the `request_add()` function where the target_id is determined in the method `approver_id = authorized.address_book[cluster]`:
-
-```
-// main.py
-def request_add(target_id, message, to_add_cg, to_add_id, to_add_name):
-            logger.info('Superadmin attention was requested from %s' % (chat_id))
-            reply_markup = ReplyKeyboardMarkup(keyboard=[
-                [KeyboardButton(text='/add %s %s %s' % (to_add_cg, to_add_name, to_add_id))],['Reject'],
-                ],one_time_keyboard=True,)
-            bot.sendMessage(target_id, message, reply_markup=reply_markup)
-```
-
-2. On board database to keep track of attendance per CG, on an event basis. This implies that there is no data persistence. (Attendance data is destroyed once the event expires, which is automatically set to 3 days) 
-
-To do so, an event is first created by the superadmin using command `/event new NAME OF EVENT`. All CGLs receive a broadcast notifying them to get counting. The counting is in a step-by-step manner and relies on the following method:
-
-```
-// main.py
-manager.updateAttendance(self._query_cg, question_order[self._progress], count)
-```
-
-Where `self._query_cg`, `question_order[self._progress]`, `count` refer to the CGL's CG, the question (eg. How many youths came today?) and the user input respectively.
-
-Anyone may query the attendance for the cluster at any point in time by typing in `/event report`. In doing so, the method `manager.printGrandTally()` queries the attendance database and reports back.
+## Getting started for developers
+Refer to [Developer Guide](/Developer.md).
 
 ---
 
@@ -160,4 +91,5 @@ Anyone may query the attendance for the cluster at any point in time by typing i
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+

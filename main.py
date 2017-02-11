@@ -89,8 +89,8 @@ class ACGLBOT(telepot.helper.ChatHandler):
         # ================================ COMMANDS FOR ADMINS
         # This is for superadministrators.
         if authorized.isSuperadmin(chat_id):
-            if command == '/hannah':
-                reply('Hannah is wonderful <3')
+            if command == '/alethea':
+                reply('Alethea is wonderful <3')
                 return
             
             elif command.startswith('/add'):
