@@ -1,6 +1,8 @@
 # AttendanceBot
 I am a Telegram bot which helps Caregroup Leaders in Arrow Ministry automatically tabulate their group attendance.
 
+<center>![start-screenshot](/img/start.png)</center><br>
+
 - [User Guide](#getting-started-for-users)
 - [Admin Guide](#getting-started-for-admins)
 - [Developer Guide](#getting-started-for-developers)
