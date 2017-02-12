@@ -270,6 +270,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command == '/me':
                     reply(manager.getMe(chat_id))
 
+                elif command == 'alethea':
+                    bot.sendSticker(chat_id, 'CAADBQADxQYAAszG4gK3wUYfyR3TSQI')
+
                 elif command == '/count':
                     if not manager.eventDoesNotExist() and not manager.eventHasEnded():
                     # self.sender.sendMessage('Shall we begin?',
