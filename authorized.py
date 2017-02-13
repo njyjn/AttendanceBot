@@ -8,10 +8,13 @@ superadmin = 87244565
 
 # dictionary for Telegram chat IDs
 address_book = {
-    # admin
+    # admin (approvals)
     'Justin'    : 87244565,     # oweek games
     'Justin2'   : 175212803,
     'jce'       : 62199558,     # choy
+    'jcs'       : 46683864,     # sherry
+    'jcn'       : 0,            # ernest
+    'jcn2'      : 62186950,     # janie
     'Test-Group': 0,
 }
 rev_book = {v: k for k, v in address_book.items()}
@@ -19,7 +22,7 @@ rev_book = {v: k for k, v in address_book.items()}
 # user groups
 global groups
 groups = {
-    'admins'    : ['Justin', 'jce', 'jcs', 'jcn'],
+    'admins'    : ['Justin', 'jce', 'jcs', 'jcn', 'jcn2'],
 }
 
 # cgs
