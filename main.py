@@ -71,7 +71,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
             logger.info('%s yelled by %s.' % message, (str(chat_id)))
 
         def request_add(target_id, message, to_add_cg, to_add_id, to_add_name):
-            logger.info('Superadmin attention was requested from %s' % (chat_id))
+            logger.info('Superadmin attention was requested from %s to %s' % (chat_id, target_id))
             reply_markup = ReplyKeyboardMarkup(keyboard=[
                 [KeyboardButton(text='/add %s %s %s' % (to_add_cg, to_add_name, to_add_id))],['Reject'],
                 ],one_time_keyboard=True,)
@@ -340,10 +340,12 @@ class ACGLBOT(telepot.helper.ChatHandler):
 
                 # map CG to appropriate cluster
                 cluster = authorized.getCluster(cg)
-                approver_id = authorized.address_book[cluster]
+                approver_id = authorized.address_book.get(cluster)
 
-                request_message = '%s (%s) from %s, %s wants to register.' % (chat_id, name, cluster, cg) 
+                request_message = '%s (%s) from %s, %s wants to register.' % (chat_id, name, cluster, cg)
                 logger.info(request_message)
+                reply('Hello, %s!' % name)
+                reply('Your request was sent your cluster rep (JC %s) for approval. If you do not hear back within a minute, try again.' % authorized.getClusterFriendlyString(cluster)) 
                 
                 # ask rep to approve registration
                 request_add(authorized.superadmin, request_message, cg, name, chat_id)
