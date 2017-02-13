@@ -15,7 +15,7 @@ import telepot.helper
 # modules
 from settings_secret import TOKEN
 from voglogger import logger
-from headmaster import question_limit, question_bank, question_order
+from headmaster import question_limit, question_bank, question_order, printGrandTally, getCGFinalString
 from tools import rreplace
 import authorized, helper, manager, easter, broadcaster
 
@@ -181,7 +181,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     reply(manager.raiseEvent(event_name))
                 elif command == '/event report':
                     adminFlag = True
-                    reply(manager.printGrandTally())
+                    reply(printGrandTally())
                 else:
                     reply('Improper parameters supplied for /event')
                     return
@@ -246,7 +246,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 self._progress += 1
                 # Complete method if all fields have been populated.
                 if self._progress >= question_limit:
-                    self.sender.sendMessage(str(manager.getCGFinalString(self._query_cg)))
+                    self.sender.sendMessage(str(getCGFinalString(self._query_cg)))
                     if manager.setAttendanceDoneForEvent(self._query_cg, self._first_try):
                         reply('Congratulations! You are the last to submit your attendance. Here you go ~')
                     else:

@@ -1,7 +1,7 @@
 # AttendanceBot
 I am a Telegram bot which helps Caregroup Leaders in Arrow Ministry automatically tabulate their group attendance.
 
-<center>![start-screenshot](/img/start.png)</center><br>
+<img style="float: center;" src="/img/start.png">
 
 - [User Guide](#getting-started-for-users)
 - [Admin Guide](#getting-started-for-admins)
@@ -9,13 +9,15 @@ I am a Telegram bot which helps Caregroup Leaders in Arrow Ministry automaticall
 
 ## Getting started for users
 
-**Hello, I am Arrow CGL Bot (ACGLBOT)!**
+**Hello, I am Arrow CGL Bot (@ACGLBOT)!**
 
 I help you take attendance for Arrow events so that you can spend more time on what is truly important—your youths. Say goodbye to that copy/pasting/calculating race-to-not-be-last (my creator was always last).
 
 ### Start
 
-I am so simple to use! To begin, enter `/start Your Name CG`. For example, if my name is **Alethea Sim** and I am from **TJC** (which is the best CG by the way), enter `/start Alethea Sim TJ`. Your CG's code may not be what you think it is. Check `/cg` to tell me the code that I can understand.
+I am so simple to use! Add me on Telegram at [@ACGLBOT](https://telegram.me/ACGLBOT).
+
+To begin, enter `/start Your Name CG`. For example, if my name is **Alethea Sim** and I am from **TJC** (which is the best CG by the way), enter `/start Alethea Sim TJ`. Your CG's code may not be what you think it is. Check `/cg` to tell me the code that I can understand.
 
 Your Cluster Rep (CR) will approve your registration. If you do not receive an approval message within a minute, your CR may be swamped with friend requests at the moment... Try again! If you are ever asked for your 'chat id', hit `/24601` and give them the string of numbers. No, you aren't Jean Valjean unless your chat id is really 24601 to which inform @njyjn immediately.
 
@@ -44,10 +46,10 @@ Only cluster reps and above receive administratorship over ACGLBOT. Currently, t
 | Cluster | Rep |
 |---|---|
 | East | Choy (the handsome one)|
-| North | TBC |
+| North | Ernest, Janie |
 | South | Sherry |
-| West United | TBC |
-| West ACIB | TBC |
+| West United | Yongde |
+| West ACIB | Allinda |
 
 The registration procedure is the same as [above](#getting-started-for-users). Note that you may use **any CG** under your care for your registration (choose your favorite (-; ). 
 
