@@ -92,21 +92,6 @@ class ACGLBOT(telepot.helper.ChatHandler):
             if command == '/alethea':
                 reply('Alethea is wonderful <3')
                 return
-            
-            elif command.startswith('/add'):
-                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\/SOTA|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
-                if matches is None:
-                    reply('SUPERADMIN: Please follow the appropriate format: \'/add cg chat_id Their Name\'')
-                else:
-                    cg = matches.group(1)
-                    target_id = matches.group(2)
-                    name = matches.group(3)
-                    added_message = 'Attempting to register %s (%s) into %s.' % (target_id, name, cg) 
-                    logger.info(added_message)
-                    bot.sendMessage(target_id, manager.add(cg.lower(), name.title(), target_id))
-                    logger.info('Succesfully registered %s (%s) into %s.' % (target_id, name, cg))
-                    reply('%s (%s) added' % (name, cg.upper()))
-                    return
 
             elif command.startswith('/rm'):
                 matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\/SOTA|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
@@ -131,6 +116,21 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 adminFlag = True
                 reply('You are an admin. Commands available:\n/admin - View this\n/yell AUDIENCE: MSG\n/ls - Show all users in database\n/find FROM NAME - Show list of names you are finding.\n/update HOUSE NAME FIELD PARAM\n/purge HOUSE NAME\n/scoreb - Show scoreboard\n/award HOUSE POINTS')
             
+            elif command.startswith('/add'):
+                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\/SOTA|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                if matches is None:
+                    reply('ADMIN: Please follow the appropriate format: \'/add cg chat_id Their Name\'')
+                else:
+                    cg = matches.group(1)
+                    target_id = matches.group(2)
+                    name = matches.group(3)
+                    added_message = 'Attempting to register %s (%s) into %s.' % (target_id, name, cg) 
+                    logger.info(added_message)
+                    bot.sendMessage(target_id, manager.add(cg.lower(), name.title(), target_id))
+                    logger.info('Succesfully registered %s (%s) into %s.' % (target_id, name, cg))
+                    reply('%s (%s) added' % (name, cg.upper()))
+                    return
+
             elif command.startswith('/update'):
                 if command == '/update':
                     reply('/update HOUSE NAME FIELD PARAM')

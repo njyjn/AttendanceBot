@@ -8,7 +8,6 @@ from voglogger import logger
 import pymongo
 from settings_secret import HOSTNAME
 import authorized
-from tools import rreplace
 import headmaster
 
 # establish connection to mongodb server
