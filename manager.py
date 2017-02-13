@@ -138,6 +138,7 @@ def add(cg, name, chatID):
 def remove(cg, name, requester):
     reply = 'Removed \'%s\' of \'%s\' cg from database.' % (name, cg)
     name = name.title()
+    cg = cg.lower()
     # perform remove
     if cgls.find( {'name': name, 'cg': cg }).count() == 0:
         return 'No such record found.'
