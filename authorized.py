@@ -13,7 +13,7 @@ address_book = {
     'Justin2'   : 175212803,
     'jce'       : 62199558,     # choy
     'jcs'       : 46683864,     # sherry
-    'jcn'       : 0,            # ernest
+    'jcn'       : 41625478,     # ernest
     'jcn2'      : 62186950,     # janie
     'Test-Group': 0,
 }
