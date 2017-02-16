@@ -129,8 +129,8 @@ def add(cg, name, chatID):
         }
 
         cgls.insert_one(cgl)
-        logger.info('Added %s of id \'%s\' to \'%s\' cg' % (chatID, name, cg))
-        return 'Welcome.'
+        logger.info('Added %s of id \'%s\' to \'%s\' cg' % (name, chatID, cg))
+        return 'Thanks for waiting, %s. Welcome.' % chatID
     logger.info('/add failed (CG does not exist)')
     return
 

@@ -349,7 +349,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 # ask rep to approve registration
                 request_add(authorized.superadmin, request_message, cg, name, chat_id)
                 request_add(approver_id, request_message, cg, name, chat_id)
-                reply('Your request was sent your cluster rep (JC %s) for approval. If you do not hear back within a minute, try again.' % authorized.getClusterFriendlyString(cluster)) 
+                reply('Your request was sent to your cluster rep (JC %s) for approval. If you do not hear back within a minute, try again.' % authorized.getClusterFriendlyString(cluster)) 
 
         # otherwise it must be trying to talk to ARIADNE!
         else:
