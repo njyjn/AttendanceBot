@@ -345,12 +345,11 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 request_message = '%s (%s) from %s, %s wants to register.' % (chat_id, name, cluster, cg)
                 logger.info(request_message)
                 reply('Hello, %s!' % name)
-                reply('Your request was sent your cluster rep (JC %s) for approval. If you do not hear back within a minute, try again.' % authorized.getClusterFriendlyString(cluster)) 
                 
                 # ask rep to approve registration
                 request_add(authorized.superadmin, request_message, cg, name, chat_id)
                 request_add(approver_id, request_message, cg, name, chat_id)
-                reply('Your registration has been forwarded to your cluster rep for processing. Please wait...')
+                reply('Your request was sent your cluster rep (JC %s) for approval. If you do not hear back within a minute, try again.' % authorized.getClusterFriendlyString(cluster)) 
 
         # otherwise it must be trying to talk to ARIADNE!
         else:
