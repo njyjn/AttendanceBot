@@ -94,7 +94,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 return
 
             elif command.startswith('/rm'):
-                matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\/SOTA|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\sA|CJ\sB|CJ\sC|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
                     reply('SUPERADMIN: Please follow the appropriate format: \'/rm CG Their Name')
                 else:
@@ -117,7 +117,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 reply('You are an admin. Commands available:\n/admin - View this\n/yell AUDIENCE: MSG\n/ls - Show all users in database\n/find FROM NAME - Show list of names you are finding.\n/update HOUSE NAME FIELD PARAM\n/purge HOUSE NAME\n/scoreb - Show scoreboard\n/award HOUSE POINTS')
             
             elif command.startswith('/add'):
-                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\/SOTA|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\sA|CJ\sB|CJ\sC|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
                     reply('ADMIN: Please follow the appropriate format: \'/add cg chat_id Their Name\'')
                 else:

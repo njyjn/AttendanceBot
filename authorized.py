@@ -32,7 +32,7 @@ groups = {
 
 cg_cluster_dictionary = {
     'jce': ['mj','vja','vjb','tpja','tpjb','tj','dmh'],
-    'jcs': ['cj/sota', 'sa a', 'sa b'],
+    'jcs': ['cj a', 'cj b', 'cj c', 'sa a', 'sa b'],
     'jcn': ['aj/yj', 'sr', 'ny/ej', 'rja', 'rjb/sji', 'rjc', 'ij'],
 }
 cluster_list = cg_cluster_dictionary.keys()

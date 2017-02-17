@@ -29,14 +29,14 @@ def getCGFinalString(cg):
 def getFinalString(cgDoc, cg=None, clusterFS=None):
     total = leaders = string = ''
     if cgDoc != None:
-        clusterFS = authorized.getClusterFriendlyString(cgDoc['cluster'])
-        total = str(cgDoc['total'])
-        leaders = str(cgDoc['l'])
-        freshies = str(cgDoc['f'])+'F, ' if not cgDoc['f'] in ('0',0) else ''
-        ncs = str(cgDoc['nc'])+'NC, ' if not cgDoc['nc'] in ('0',0) else ''
-        nbs = str(cgDoc['nb'])+'NB, ' if not cgDoc['nb'] in ('0',0) else ''
-        irs = str(cgDoc['ir'])+'IR, ' if not cgDoc['ir'] in ('0',0) else ''
-        visitors = str(cgDoc['v'])+'V, ' if not cgDoc['v'] in ('0',0) else ''
+        clusterFS = authorized.getClusterFriendlyString(cgDoc.get('cluster', 'Error'))
+        total = str(cgDoc.get('total', 0))
+        leaders = str(cgDoc.get('l', 0))
+        freshies = str(cgDoc.get('f', 0))+'F, ' if not cgDoc['f'] in ('0',0) else ''
+        ncs = str(cgDoc.get('nc', 0))+'NC, ' if not cgDoc['nc'] in ('0',0) else ''
+        nbs = str(cgDoc.get('nb', 0))+'NB, ' if not cgDoc['nb'] in ('0',0) else ''
+        irs = str(cgDoc.get('ir', 0))+'IR, ' if not cgDoc['ir'] in ('0',0) else ''
+        visitors = str(cgDoc.get('v', 0))+'V, ' if not cgDoc['v'] in ('0',0) else ''
         string = freshies + irs + ncs + visitors + nbs
         string = rreplace(string, ', ', '', 1)
     else:
@@ -63,10 +63,13 @@ def printGrandTally():
     north = '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (ajyj, sr, nyej, rja, rjbsji, rjc, ij, northTotal)
 
     southTotal = getFinalString(tally.find_one( {'cluster': 'jcs'} ), None, 'jcs')
-    cjsota = getCGFinalString('cj/sota')
+    #cjsota = getCGFinalString('cj/sota')
+    cja = getCGFinalString('cj a')
+    cjb = getCGFinalString('cj b')
+    cjc = getCGFinalString('cj c')
     saa = getCGFinalString('sa a')
     sab = getCGFinalString('sa b')
-    south = '%s\n%s\n%s\n%s\n' % (cjsota, saa, sab, southTotal)
+    south = '%s\n%s\n%s\n%s\n%s\n%s\n' % (cja, cjb, cjc, saa, sab, southTotal)
 
     eastTotal = getFinalString(tally.find_one( {'cluster': 'jce'} ), None, 'jce')
     mj = getCGFinalString('mj')
