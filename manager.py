@@ -116,7 +116,7 @@ def add(cg, name, chatID):
         # check for duplicate name
         if cgls.find( {'name': name, 'cg': cg }).count() != 0:
             logger.warn('/add failed due to duplicate entry')
-            return 'There is already someone with that name and cg in the database. /add failed.'
+            return
 
         timestamp = str(datetime.now())
     
