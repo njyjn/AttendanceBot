@@ -130,7 +130,7 @@ def add(cg, name, chatID):
 
         cgls.insert_one(cgl)
         logger.info('Added %s of id \'%s\' to \'%s\' cg' % (name, chatID, cg))
-        return 'Thanks for waiting, %s. Welcome.' % chatID
+        return 'Thanks for waiting, %s. Welcome.' % name
     logger.info('/add failed (CG does not exist)')
     return
 
@@ -363,13 +363,13 @@ def updateGrandAttendance(cluster):
     cgList = cgs.find( {'cluster': cluster} )
     total = totalL = totalF = totalIR = totalNC = totalNB = totalV = 0
     for cg in cgList:
-        total += int(cg['total'])
-        totalL += int(cg['l'])
-        totalF += int(cg['f'])
-        totalIR += int(cg['ir'])
-        totalNC += int(cg['nc'])
-        totalNB += int(cg['nb'])
-        totalV += int(cg['v'])
+        total += int(cg.get('total', 0))
+        totalL += int(cg.get('l', 0))
+        totalF += int(cg.get('f', 0))
+        totalIR += int(cg.get('ir', 0))
+        totalNC += int(cg.get('nc', 0))
+        totalNB += int(cg.get('nb', 0))
+        totalV += int(cg.get('v', 0))
     tally.update_one( { 'cluster': cluster }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } }, upsert=True )
 
 from authorized import whoIs
