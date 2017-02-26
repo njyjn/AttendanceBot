@@ -1,0 +1,10 @@
+# This is to input into BotFather
+
+start - Start AttendanceBot
+stop - Stop AttendanceBot
+count - Count attendance
+howmany - See how many people came today
+me - Find out who you are
+ls - View the list of leaders subscribed (la) (admin only)
+event - Event handling (new, end or clear) (admin only)
+yell - Broadcast a message to all (admin only)

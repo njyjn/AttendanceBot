@@ -50,10 +50,9 @@ Only cluster reps and above receive administratorship over ACGLBOT. Currently, t
 | South | Sherry |
 | West United | Yongde |
 | West ACIB | Allinda |
+| Other | Pastor, Overseer, Cluster Reps, Other |
 
 The registration procedure is the same as [above](#getting-started-for-users). Note that you may use **any CG** under your care for your registration (choose your favorite (-; ). 
-
-An additional step would be to enter `/24601` and inform @njyjn on Telegram of the reply so that he can add you to the admin system. 
 
 As an administrator you are the gatekeeper to a number of things:
 
