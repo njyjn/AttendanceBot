@@ -178,7 +178,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command == '/event end':
                     adminFlag = True
                     reply(manager.forceEndEvent())
-                    broadcaster.yell(bot, 'all', 'Attendance taking has ended.', chat_id)
+                    broadcaster.yell(bot, 'all', 'What a day it has been! /howmany encountered Him today?', chat_id)
                 elif command.startswith('/event new'):
                     adminFlag = True
                     event_name = command.replace('/event new ', '')
@@ -261,7 +261,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
-
+            # All other commands
             else:
                 # /help [<command>]
                 if command == '/help':
@@ -278,6 +278,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
 
                 elif command == 'alethea':
                     bot.sendSticker(chat_id, 'CAADBQADxQYAAszG4gK3wUYfyR3TSQI')
+
+                elif command == '/howmany':
+                    reply(printGrandTally())
 
                 elif command == '/count':
                     if not manager.eventDoesNotExist() and not manager.eventHasEnded():
