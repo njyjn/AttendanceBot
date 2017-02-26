@@ -40,7 +40,7 @@ def getFinalString(cgDoc, cg=None, clusterFS=None):
         # Add suffixes only if count is non-zero
         freshies = '' if freshies in ('','0') else freshies+'F, '
         ncs = '' if ncs in ('','0') else ncs+'NC, '
-        nbs = '' if nbs in ('','0') else nbs+'NB, '
+        nbs = '' if nbs in ('','0') else nbs+'NB 🎉, '
         irs = '' if irs in ('','0') else irs+'IR, '
         visitors = '' if visitors in ('','0') else visitors+'V, '
         string = freshies + irs + ncs + visitors + nbs
