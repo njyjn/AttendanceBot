@@ -16,7 +16,7 @@ import telepot.helper
 from settings_secret import TOKEN
 from voglogger import logger
 from headmaster import question_limit, question_bank, question_order, printGrandTally, getCGFinalString
-from tools import rreplace
+from tools import rreplace, generateCgRegexPattern
 import authorized, helper, manager, easter, broadcaster
 
 def getTime():
@@ -94,7 +94,10 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 return
 
             elif command.startswith('/rm'):
-                matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\sA|CJ\sB|CJ\sC|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                cg_regex_pattern = generateCgRegexPattern()
+                regex_pattern = '\/rm\s+' + str(cg_regex_pattern) + '\s+([a-zA-Z ]+)'
+                matches = re.match(regex_pattern, command, re.IGNORECASE)
+                #matches = re.match('\/rm\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\sA|CJ\sB|CJ\sC|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
                     reply('SUPERADMIN: Please follow the appropriate format: \'/rm CG Their Name')
                 else:
@@ -117,7 +120,10 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 reply('You are an admin. Commands available:\n/admin - View this\n/yell AUDIENCE: MSG\n/ls - Show all users in database\n/find FROM NAME - Show list of names you are finding.\n/update HOUSE NAME FIELD PARAM\n/purge HOUSE NAME\n/scoreb - Show scoreboard\n/award HOUSE POINTS')
             
             elif command.startswith('/add'):
-                matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\sA|CJ\sB|CJ\sC|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
+                cg_regex_pattern = generateCgRegexPattern()
+                regex_pattern = '\/add\s+' + str(cg_regex_pattern) + '\s+([0-9]+)\s+([a-zA-Z ]+)'
+                matches = re.match(regex_pattern, command, re.IGNORECASE)
+                #matches = re.match('\/add\s+(MJ|VJA|VJB|TPJA|TPJB|TJ|DMH|CJ\sA|CJ\sB|CJ\sC|SA\sA|SA\sB|AJ\/YJ|SR|NY\/EJ|RJA|RJB\/SJI|RJC|IJ)\s+([0-9]+)\s+([a-zA-Z ]+)', command, re.IGNORECASE)
                 if matches is None:
                     reply('ADMIN: Please follow the appropriate format: \'/add cg chat_id Their Name\'')
                 else:
@@ -324,13 +330,14 @@ class ACGLBOT(telepot.helper.ChatHandler):
             reply('For full list of CG abbreviations type in /cg')
             reply('Please note that currently only JC East, North and South may use this system.')
         elif command.startswith('/start'):
-            regex_pattern = '\/start\s+([a-zA-Z ]+)\s+(' 
+            # regex_pattern = '\/start\s+([a-zA-Z ]+)\s+(' 
 
-            # extract all given cgs in authorized into a regex id pattern
-            for cg in authorized.cg_list:
-                regex_pattern += cg + '|'
-            regex_pattern = rreplace(regex_pattern, '|', ')', 1)
-
+            # # extract all given cgs in authorized into a regex id pattern
+            # for cg in authorized.cg_list:
+            #     regex_pattern += cg + '|'
+            # regex_pattern = rreplace(regex_pattern, '|', ')', 1)
+            cg_regex_pattern = generateCgRegexPattern()
+            regex_pattern = '\/start\s+([a-zA-Z ]+)\s+' + str(cg_regex_pattern)
             matches = re.match(regex_pattern, command, re.IGNORECASE)
             if matches is None:
                 reply('Either you did not follow the appropriate format: \'/start Your Name CG\' or you did not use the correct CG code. (/cg)')
