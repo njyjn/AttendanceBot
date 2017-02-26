@@ -34,6 +34,8 @@ cg_cluster_dictionary = {
     'jce': ['mj','vja','vjb','tpja','tpjb','tj','dmh'],
     'jcs': ['cj a', 'cj b', 'cj c', 'sa a', 'sa b'],
     'jcn': ['aj/yj', 'sr', 'ny/ej', 'rja', 'rjb/sji', 'rjc', 'ij'],
+    'jcwu': ['pj/jj','hc','nj'],
+    'jcwa': ['ac','ibcg'],
 }
 cluster_list = cg_cluster_dictionary.keys()
 cg_list = [item for sublist in [v for k, v in cg_cluster_dictionary.items()] for item in sublist]
