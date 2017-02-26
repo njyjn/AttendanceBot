@@ -257,7 +257,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                         reply('Congratulations! You are the last to submit your attendance. Here you go ~')
                     else:
                         reply('Congratulations! You are not the last to submit your attendance. Peace.')
-                    reply(manager.submitGrandAttendance(self._query_cg))
+                    reply(manager.submitClusterAttendance(self._query_cg))
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))

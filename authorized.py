@@ -9,7 +9,7 @@ superadmin = 87244565
 # dictionary for Telegram chat IDs
 address_book = {
     # admin (approvals)
-    'Justin'    : 87244565,     # oweek games
+    'Justin'    : 87244565,     # 
     'Justin2'   : 175212803,
     'jce'       : 62199558,     # choy
     'jcs'       : 46683864,     # sherry
@@ -39,6 +39,7 @@ cg_cluster_dictionary = {
 }
 cluster_list = cg_cluster_dictionary.keys()
 cg_list = [item for sublist in [v for k, v in cg_cluster_dictionary.items()] for item in sublist]
+number_of_clusters = len(cg_cluster_dictionary.keys())-1 # to account for 'Other'
 
 cluster_fs_dictionary = {
     'jce': 'East',
@@ -48,6 +49,7 @@ cluster_fs_dictionary = {
     'jcwa': 'West',
     'jcwal': 'West ACIB',
     'jcn': 'North',
+    'all': 'JC',
 }
 
 # """

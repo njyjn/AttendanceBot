@@ -7,7 +7,7 @@ import time
 from voglogger import logger
 import pymongo
 from settings_secret import HOSTNAME
-import authorized
+from authorized import whoIs, number_of_clusters, cg_list, getCluster
 import headmaster
 
 # establish connection to mongodb server
@@ -32,7 +32,7 @@ events.create_index('end', expireAfterSeconds=0)
 
 ### helper functions ###
 def cgIsValid(cg):
-    return cg in authorized.cg_list or cg == 'all'
+    return cg in cg_list or cg == 'all'
 
 def cglFieldIsValid(field):
     fields = {
@@ -159,7 +159,7 @@ def getEnumerate(cg, requester):
 
         # cover the all case and single cg case
         if cg == 'all':
-            cgs = authorized.cg_list
+            cgs = cg_list
         else:
             cgs = [cg]
 
@@ -322,27 +322,27 @@ def setAttendanceDoneForEvent(cg, isFirstTry):
 
 def lastToSubmitAttendance():
     cursor = events.find_one( { 'done': False } )
-    cg_list = authorized.cg_list
     #cg_list = ['mj','vja','vjb','tpja','tpjb','tj','dmh']
     #cg_list = ['tj', 'dmh']
     return cursor['tally'] >= (len(cg_list)-1)
 
-def submitGrandAttendance(cg):
-    cluster = authorized.getCluster(cg)
-    updateGrandAttendance(cluster)
+def submitClusterAttendance(cg):
+    cluster = getCluster(cg)
+    updateClusterAttendance(cluster)
+    updateTotalAttendance()
     return headmaster.printGrandTally()
 
 ## CG functions
 # /updateAttendance
 def updateAttendance(cg, field, number):
     if cgIsValid(cg):
-        cluster = authorized.getCluster(cg)
+        cluster = getCluster(cg)
         cgs.update_one( { '$and': [ {'name': cg}, {'cluster': cluster} ] }, { '$set': { field: str(number) } }, upsert=True )
 
 def isAllSubmitted(cluster):
     results = cgs.find( { '$and': [ {'done': True }, {'cluster': cluster} ] } )
     if results.count() == cgs.find( { 'cluster': cluster } ).count():
-        updateGrandAttendance(cluster)
+        updateClusterAttendance(cluster)
         reset()
         return True
     return False
@@ -357,9 +357,9 @@ def reset():
     cgs.remove()
     tally.remove()
 
-# /updateGrandAttendance
+# /updateClusterAttendance
 # This will update the total attendance for the cluster.
-def updateGrandAttendance(cluster):
+def updateClusterAttendance(cluster):
     cgList = cgs.find( {'cluster': cluster} )
     total = totalL = totalF = totalIR = totalNC = totalNB = totalV = 0
     for cg in cgList:
@@ -372,4 +372,18 @@ def updateGrandAttendance(cluster):
         totalV += int(cg.get('v', 0))
     tally.update_one( { 'cluster': cluster }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } }, upsert=True )
 
-from authorized import whoIs
+def updateTotalAttendance():
+    clusterList = tally.find( { 'cluster': { '$ne': 'all'} } )
+    # Only bother if all clusters have submitted attendance
+    if clusterList.count() < number_of_clusters - 1:
+        return
+    total = totalL = totalF = totalIR = totalNC = totalNB = totalV = 0
+    for cluster in clusterList:
+        total += int(cluster.get('total', 0))
+        totalL += int(cluster.get('l', 0))
+        totalF += int(cluster.get('f', 0))
+        totalIR += int(cluster.get('ir', 0))
+        totalNC += int(cluster.get('nc', 0))
+        totalNB += int(cluster.get('nb', 0))
+        totalV += int(cluster.get('v', 0))
+    tally.update_one( { 'cluster': 'all' }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } }, upsert=True )

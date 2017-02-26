@@ -30,14 +30,21 @@ def getFinalString(cgDoc, cg=None, clusterFS=None):
     total = leaders = string = ''
     if cgDoc != None:
         clusterFS = authorized.getClusterFriendlyString(cgDoc.get('cluster', 'Error'))
-        total = str(cgDoc.get('total', 0))
-        leaders = str(cgDoc.get('l', 0))
-        freshies = str(cgDoc.get('f', 0))+'F, ' if not cgDoc['f'] in ('0',0) else ''
-        ncs = str(cgDoc.get('nc', 0))+'NC, ' if not cgDoc['nc'] in ('0',0) else ''
-        nbs = str(cgDoc.get('nb', 0))+'NB, ' if not cgDoc['nb'] in ('0',0) else ''
-        irs = str(cgDoc.get('ir', 0))+'IR, ' if not cgDoc['ir'] in ('0',0) else ''
-        visitors = str(cgDoc.get('v', 0))+'V, ' if not cgDoc['v'] in ('0',0) else ''
+        total = str(cgDoc.get('total', ''))
+        leaders = str(cgDoc.get('l', ''))
+        freshies = str(cgDoc.get('f', ''))
+        ncs = str(cgDoc.get('nc', ''))
+        nbs = str(cgDoc.get('nb', ''))
+        irs = str(cgDoc.get('ir', ''))
+        visitors = str(cgDoc.get('v', ''))
+        # Add suffixes only if count is non-zero
+        freshies = '' if freshies in ('','0') else freshies+'F, '
+        ncs = '' if ncs in ('','0') else ncs+'NC, '
+        nbs = '' if nbs in ('','0') else nbs+'NB, '
+        irs = '' if irs in ('','0') else irs+'IR, '
+        visitors = '' if visitors in ('','0') else visitors+'V, '
         string = freshies + irs + ncs + visitors + nbs
+        # Rid last comma
         string = rreplace(string, ', ', '', 1)
     else:
         clusterFS = authorized.getClusterFriendlyString(clusterFS)
@@ -81,4 +88,17 @@ def printGrandTally():
     dmh = getCGFinalString('dmh')
     east = '%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' % (mj, vja, vjb, tpja, tpjb, tj, dmh, eastTotal)
 
-    return '%s\n%s\n%s' % (north, south, east)
+    westUnitedTotal = getFinalString(tally.find_one( {'cluster': 'jcwu'} ), None, 'jcwul')
+    pjjj = getCGFinalString('pj/jj')
+    hc = getCGFinalString('hc')
+    nj = getCGFinalString('nj')
+    westu = '%s\n%s\n%s\n%s\n' % (pjjj, hc, nj, westUnitedTotal)
+
+    westAcibTotal = getFinalString(tally.find_one( {'cluster': 'jcwa'} ), None, 'jcwal')
+    ac = getCGFinalString('ac')
+    ibcg = getCGFinalString('ibcg')
+    westa = '%s\n%s\n%s\n' % (ac, ibcg, westAcibTotal)
+
+    jcTotal = getFinalString(tally.find_one( {'cluster': 'all'} ), None, 'all') 
+
+    return '%s\n%s\n%s\n%s\n%s\n%s' % (north, south, east, westu, westa, jcTotal)
