@@ -28,8 +28,8 @@ def getCGFinalString(cg):
 
 def getFinalString(cgDoc, cg=None, clusterFS=None):
     total = leaders = string = ''
+    # Blank cursors imply the CG has yet to submit attendance, so we skip them to show blank tally
     if cgDoc != None:
-        clusterFS = authorized.getClusterFriendlyString(cgDoc.get('cluster', 'Error'))
         total = str(cgDoc.get('total', ''))
         leaders = str(cgDoc.get('l', ''))
         freshies = str(cgDoc.get('f', ''))
@@ -46,8 +46,12 @@ def getFinalString(cgDoc, cg=None, clusterFS=None):
         string = freshies + irs + ncs + visitors + nbs
         # Rid last comma
         string = rreplace(string, ', ', '', 1)
+    # Blank clusterFS means the CG is querying this method for its tally string.
+    if clusterFS == None:
+        clusterFS = authorized.getClusterFriendlyString(cgDoc.get('cluster', 'Error'))
     else:
         clusterFS = authorized.getClusterFriendlyString(clusterFS)
+    # Empty CGs mean that the cluster is looking for its total attendance.
     if cg != None:
         cluster_and_cg = '%s (%s)' % (clusterFS.title(), cg.upper())
     else:
