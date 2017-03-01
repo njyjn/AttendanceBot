@@ -1,4 +1,4 @@
-from manager import cgs, tally
+from manager import cgs, tally, events
 from tools import rreplace
 import authorized
 
@@ -15,6 +15,10 @@ question_bank = {
 question_order = ['total', 'l', 'f', 'ir', 'nb', 'nc', 'v',]
 
 question_limit = len(question_order)
+
+def getEventName():
+    eventDoc = events.find_one( {} )
+    return str(eventDoc.get('name', 'AttendanceBot')) if eventDoc != None else 'AttendanceBot'
 
 # produces a string for individual cg records, format:
 # East (TJ): 30+3 (5F, 1NC, 2NB, 6IR)
@@ -63,6 +67,8 @@ def getFinalString(cgDoc, cg=None, clusterFS=None):
     return '%s: %s+%s (%s)' % (cluster_and_cg, total, leaders, string)
 
 def printGrandTally():
+    eventName = getEventName()
+    
     northTotal = getFinalString(tally.find_one( {'cluster': 'jcn'} ), None, 'jcn')
     ajyj = getCGFinalString('aj/yj')
     sr = getCGFinalString('sr')
@@ -105,4 +111,4 @@ def printGrandTally():
 
     jcTotal = getFinalString(tally.find_one( {'cluster': 'all'} ), None, 'all') 
 
-    return '%s\n%s\n%s\n%s\n%s\n%s' % (north, south, east, westu, westa, jcTotal)
+    return '%s\n\n%s\n%s\n%s\n%s\n%s\n%s' % (eventName, north, south, east, westu, westa, jcTotal)

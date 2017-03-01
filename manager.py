@@ -292,7 +292,7 @@ def eventHasEnded():
 def forceEndEvent():
     event_name = events.find_one( {} )['name']
     events.update_one( { 'done': False }, { '$set': { 'done': True } } )
-    return 'Attendance event \'%s\'ended.' % event_name
+    return 'Attendance event \'%s\' ended.' % event_name
 
 def forceDeleteEvent():
     reset()
