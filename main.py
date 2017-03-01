@@ -269,60 +269,21 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command.startswith('/help'):
                     keyword = re.match('\s*/help\s+([a-z]+)\s*', command).group(1)
                     reply(helper.getHelp(keyword))
-                # /retrieve_key
-                elif command == '/retrieve_key':
-                    reply(str(chat_id))
                 # /me
                 elif command == '/me':
                     reply(manager.getMe(chat_id))
-
                 elif command == 'alethea':
                     bot.sendSticker(chat_id, 'CAADBQADxQYAAszG4gK3wUYfyR3TSQI')
-
                 elif command == '/howmany':
                     reply(printGrandTally())
-
                 elif command == '/count':
                     if not manager.eventDoesNotExist() and not manager.eventHasEnded():
-                    # self.sender.sendMessage('Shall we begin?',
-                    #     reply_markup=InlineKeyboardMarkup(
-                    #         inline_keyboard=[[
-                    #             InlineKeyboardButton(text='Ok', callback_data='start'),
-                    #         ]]
-                    #     )
-                    # )
-                    # self.close()
                         _progress = 0
                         reply('WARNING: You will potentially override existing data if you do not go through with the full procedure. If so, type exit to leave now.')
                         reply(str(question_bank.get(question_order[self._progress])))
                         self.track_reply = True
                     else:
                         reply('No one is counting attendance now. You may wish to do other productive things.')
-
-                # Handles replies from Headmaster
-                # elif reply_source_message_id != None:
-                #     if self._query_cg == None:
-                #         self._query_cg = manager.getCG(chat_id).lower()
-                #         logging.info(self._query_cg)
-
-                #     if self._progress >= question_limit:
-                #         self.sender.sendMessage(str(manager.getCGFinalString(self._query_cg), reply_markup=None))
-                #         _progress = 0
-                #         self.close()
-
-                #     if headcount_input == -1:
-                #         reply('NaN. Restart.')
-                #         self.close()
-                    
-                #     try:
-                #         if manager.updateAttendance(self._query_cg, question_order[self._progress], int(headcount_input)):
-                #             logging.info('Database updated.')
-                #         self._progress += 1
-                #         self.sender.sendMessage(str(question_bank.get(question_order[self._progress])), reply_markup=
-                #             ForceReply(force_reply=True))
-                #     except ValueError:
-                #         reply('NaN. Restart.')
-                #         self.close()
                 else:
                     reply(easter.responseHandler(command))
         
@@ -333,12 +294,6 @@ class ACGLBOT(telepot.helper.ChatHandler):
             reply('For full list of CG abbreviations type in /cg')
             reply('Please note that currently only JC East, North and South may use this system.')
         elif command.startswith('/start'):
-            # regex_pattern = '\/start\s+([a-zA-Z ]+)\s+(' 
-
-            # # extract all given cgs in authorized into a regex id pattern
-            # for cg in authorized.cg_list:
-            #     regex_pattern += cg + '|'
-            # regex_pattern = rreplace(regex_pattern, '|', ')', 1)
             cg_regex_pattern = generateCgRegexPattern()
             regex_pattern = '\/start\s+([a-zA-Z ]+)\s+' + str(cg_regex_pattern)
             matches = re.match(regex_pattern, command, re.IGNORECASE)
@@ -365,53 +320,6 @@ class ACGLBOT(telepot.helper.ChatHandler):
         else:
             reply('You are not registered. Hit /start or contact Justin (@njyjn) for more information.')
         return
-
-# class HeadmasterManager(telepot.helper.CallbackQueryOriginHandler):
-#     def __init__(self, *args, **kwargs):
-#         super(HeadmasterManager, self).__init__(*args, **kwargs)
-#         self._query_cg = None
-#         self._progress = 0
-#         query_id = None
-
-#     def _show_next_question(self, from_id):
-#         question = question_bank.get(str(question_order[self._progress]))            
-#         bot.sendMessage(from_id, str(question), reply_markup=ForceReply(
-#             force_reply=True))
-#         self._progress += 1
-
-#     def on_chat_message(self, message):
-#         query_id, from_id, query_data = telepot.glance(message, flavor='callback_query')
-
-#         if self._query_cg == None:
-#             self._query_cg = manager.getCG(from_id)
-
-#         if self._progress >= question_limit:
-#             self.editor.editMessageText(str(getCGFinalString(self._query_cg), reply_markup=None))
-#             self.close()
-
-#         manager.updateAttendance(self._query_cg, question_order[self._progress], query_data) 
-#         self._show_next_question(from_id)
-
-#     def on_callback_query(self, message):
-#         query_id, from_id, query_data = telepot.glance(message, flavor='callback_query')
-
-#         if self._query_cg == None:
-#             self._query_cg = manager.getCG(from_id)
-
-#         if self._progress >= question_limit:
-#             self.editor.editMessageText(str(manager.getCGFinalString(self._query_cg), reply_markup=None))
-#             self.close()
-
-#         manager.updateAttendance(self._query_cg, question_order[self._progress], query_data) 
-#         self._show_next_question(from_id)
-
-#logger.info('ACGLBOT is listening ...')
-
-#bot = ACGLBOT(TOKEN)
-#bot.message_loop()
-
-#while 1:
-    #time.sleep(500)
 
 bot = telepot.DelegatorBot(TOKEN, [
         pave_event_space()(
