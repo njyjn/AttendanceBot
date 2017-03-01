@@ -168,7 +168,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     reply(manager.find(cg.lower(), name.title(), chat_id))
 
             elif command.startswith('/event'):
-                if command == '/event':
+                if command == '/event' or command == '/event new':
                     reply('Use format \'/event new Event Name\' or \'/event end\' or \'/event reopen\'')
                     return
                 elif command == '/event reopen':
