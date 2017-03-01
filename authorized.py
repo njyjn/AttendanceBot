@@ -11,10 +11,13 @@ address_book = {
     # admin (approvals)
     'Justin'    : 87244565,     # 
     'Justin2'   : 175212803,
+    'other'     : 87244565,     # superadmin approves cr, overseer,
     'jce'       : 62199558,     # choy
     'jcs'       : 46683864,     # sherry
     'jcn'       : 41625478,     # ernest
     'jcn2'      : 62186950,     # janie
+    'jcwu'      : 72510072,     # yongde 
+    'jcwa'      : 36329885,     # allinda
     'Test-Group': 0,
 }
 rev_book = {v: k for k, v in address_book.items()}
@@ -22,7 +25,7 @@ rev_book = {v: k for k, v in address_book.items()}
 # user groups
 global groups
 groups = {
-    'admins'    : ['Justin', 'jce', 'jcs', 'jcn', 'jcn2'],
+    'admins'    : ['Justin', 'jce', 'jcs', 'jcn', 'jcn2', 'jcwu', 'jcwa'],
 }
 
 # cgs
@@ -36,6 +39,7 @@ cg_cluster_dictionary = {
     'jcn': ['aj/yj', 'sr', 'ny/ej', 'rja', 'rjb/sji', 'rjc', 'ij'],
     'jcwu': ['pj/jj','hc','nj'],
     'jcwa': ['ac','ibcg'],
+    'other': ['overseer', 'pastor', 'cr', 'other'],
 }
 cluster_list = cg_cluster_dictionary.keys()
 cg_list = [item for sublist in [v for k, v in cg_cluster_dictionary.items()] for item in sublist]
