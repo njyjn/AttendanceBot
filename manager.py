@@ -330,7 +330,7 @@ def submitClusterAttendance(cg):
     cluster = getCluster(cg)
     updateClusterAttendance(cluster)
     updateTotalAttendance()
-    return headmaster.printGrandTally()
+    #return headmaster.printGrandTally()
 
 ## CG functions
 # /updateAttendance

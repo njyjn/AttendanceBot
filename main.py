@@ -253,11 +253,15 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 # Complete method if all fields have been populated.
                 if self._progress >= question_limit:
                     self.sender.sendMessage(str(getCGFinalString(self._query_cg)))
+                    manager.submitClusterAttendance(self._query_cg)
                     if manager.setAttendanceDoneForEvent(self._query_cg, self._first_try):
                         reply('Congratulations! You are the last to submit your attendance. Here you go ~')
+                        reply(printGrandTally())
+                        reply('Jesus loves the least, lost and LAST. Shalom.')
                     else:
-                        reply('Congratulations! You are not the last to submit your attendance. Peace.')
-                    reply(manager.submitClusterAttendance(self._query_cg))
+                        reply('Congratulations! You are not the last to submit your attendance. /howmany encountered Jesus today?')
+                        reply('Shalom out.')
+                    #reply(manager.submitClusterAttendance(self._query_cg))
                     self.close()
                 # otherwise send the next question
                 self.sender.sendMessage(str(question_bank.get(question_order[self._progress])))
