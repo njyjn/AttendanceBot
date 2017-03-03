@@ -12,3 +12,12 @@ def generateCgRegexPattern():
 def rreplace(s, old, new, occurrence):
     li = s.rsplit(old, occurrence)
     return new.join(li)
+
+def getTime():
+    return datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S, %d %B %Y ')
+
+def groupArg2List(groupList):
+    if '+' not in groupList:
+        return [groupList]
+    else:
+        return re.split('\s*+\s*', groupList)

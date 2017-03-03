@@ -19,15 +19,6 @@ from headmaster import question_limit, question_bank, question_order, printGrand
 from tools import rreplace, generateCgRegexPattern
 import authorized, helper, manager, easter, broadcaster
 
-def getTime():
-    return datetime.datetime.fromtimestamp(time.time()).strftime('%H:%M:%S, %d %B %Y ')
-
-def groupArg2List(groupList):
-    if '+' not in groupList:
-        return [groupList]
-    else:
-        return re.split('\s*+\s*', groupList)
-
 class ACGLBOT(telepot.helper.ChatHandler):
 #class ACGLBOT(telepot.Bot):
     def __init__(self, *args, **kwargs):
@@ -134,7 +125,8 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     logger.info(added_message)
                     bot.sendMessage(target_id, manager.add(cg.lower(), name.title(), target_id))
                     logger.info('Succesfully registered %s (%s) into %s.' % (target_id, name, cg))
-                    reply('%s (%s) added' % (name, cg.upper()))
+                    added_message = '%s (%s) added' % (name, cg.upper())
+                    bot.sendMessage(chat_id, added_message, reply_markup=ReplyKeyboardRemove(remove_keyboard=True))
                     return
 
             elif command.startswith('/update'):
@@ -296,7 +288,6 @@ class ACGLBOT(telepot.helper.ChatHandler):
         elif command == '/start':
             reply('Hello there. Please enter \'/start Full Name CG\'\n\nEg: /start Alethea Sim TJ\n')
             reply('For full list of CG abbreviations type in /cg')
-            reply('Please note that currently only JC East, North and South may use this system.')
         elif command.startswith('/start'):
             cg_regex_pattern = generateCgRegexPattern()
             regex_pattern = '\/start\s+([a-zA-Z ]+)\s+' + str(cg_regex_pattern)
