@@ -252,6 +252,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                         reply('Congratulations! You are the last to submit your attendance. Here you go ~')
                         reply(printGrandTally())
                         reply('Jesus loves the least, lost and LAST. Shalom.')
+                        bot.sendMessage(authorized.superadmin, 'All CGs accounted for. %s was last.' % self._query_cg)
                     else:
                         reply('Congratulations! You are not the last to submit your attendance. /howmany encountered Jesus today?')
                         reply('Shalom out.')
