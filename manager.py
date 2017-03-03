@@ -277,7 +277,7 @@ def forceDeleteEvent():
     reset()
     events.delete_one( {} )
     logger.info('Event manually deleted.')
-    return 'Done.'
+    return 'Event deleted.'
 
 # reopen done event
 def reopenEvent():

@@ -13,7 +13,7 @@ from telepot.namedtuple import (
 import telepot.helper
 
 # modules
-from settings_secret import TOKEN
+from settings_secret import TOKEN, UPDATES_CHANNEL
 from voglogger import logger
 from headmaster import question_limit, question_bank, question_order, printGrandTally, getCGFinalString
 from tools import rreplace, generateCgRegexPattern
@@ -162,7 +162,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command == '/event end':
                     adminFlag = True
                     reply(manager.forceEndEvent())
-                    yell(bot, 'all What a day it has been! /howmany encountered Him today?', chat_id)
+                    yell(bot, 'all PTL, all youths have been accounted for. What a day it has been!\n\nSubscribe to %s for updates.' % UPDATES_CHANNEL, chat_id)
+                    # Post attendance to official channel
+                    bot.sendMessage(UPDATES_CHANNEL, str(printGrandTally()))
                 elif command.startswith('/event new'):
                     adminFlag = True
                     event_name = command.replace('/event new ', '')
