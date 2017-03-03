@@ -51,6 +51,7 @@ def dm(bot, target_and_message, requester):
 	target_id = matches.group(1)
 	message = matches.group(2)
 	message = manager.getName(requester) + ': ' + message
-	bot.sendMessage(target_id, message)
+	out_message = message + '\n\n[This message was sent as a DM by an admin.]'
+	bot.sendMessage(target_id, out_message)
 	logger.info('%s sent to %s from %s.' % (message, target_id, requester))
-	return 'Message sent to %s (%s).' % (manager.getName(target_id), target_id)
+	return '\'%s\' sent to %s (%s).' % (message, manager.getName(target_id), target_id)
