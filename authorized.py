@@ -44,6 +44,7 @@ cg_cluster_dictionary = {
 cluster_list = cg_cluster_dictionary.keys()
 cg_list = [item for sublist in [v for k, v in cg_cluster_dictionary.items()] for item in sublist]
 number_of_clusters = len(cg_cluster_dictionary.keys())-1 # to account for 'Other'
+number_of_cgs = len(cg_list) - len(cg_cluster_dictionary.get('other'))
 
 cluster_fs_dictionary = {
     'jce': 'East',

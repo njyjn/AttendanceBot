@@ -7,7 +7,7 @@ import time
 from voglogger import logger
 import pymongo
 from settings_secret import HOSTNAME
-from authorized import whoIs, number_of_clusters, cg_list, getCluster
+from authorized import whoIs, number_of_clusters, number_of_cgs, cg_list, getCluster
 import headmaster
 import re
 
@@ -301,9 +301,9 @@ def setAttendanceDoneForEvent(cg, isFirstTry):
 
 def lastToSubmitAttendance():
     cursor = events.find_one( { 'done': False } )
-    #cg_list = ['mj','vja','vjb','tpja','tpjb','tj','dmh']
-    #cg_list = ['tj', 'dmh']
-    return cursor['tally'] >= (len(cg_list)-1)
+    #offset for other, pastor, cr, overseer
+    #return cursor['tally'] >= (len(cg_list)-1)-len(cg_cluster_dictionary))
+    return cursor['tally'] >= number_of_cgs-1
 
 def submitClusterAttendance(cg):
     cluster = getCluster(cg)
