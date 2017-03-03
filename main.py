@@ -158,16 +158,16 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command == '/event reopen':
                     adminFlag = True
                     reply(manager.reopenEvent())
-                    yell(bot, 'all', 'Attendance taking reopened.', chat_id)
+                    yell(bot, 'all Attendance taking reopened.', chat_id)
                 elif command == '/event end':
                     adminFlag = True
                     reply(manager.forceEndEvent())
-                    yell(bot, 'all', 'What a day it has been! /howmany encountered Him today?', chat_id)
+                    yell(bot, 'all What a day it has been! /howmany encountered Him today?', chat_id)
                 elif command.startswith('/event new'):
                     adminFlag = True
                     event_name = command.replace('/event new ', '')
                     if manager.eventDoesNotExist():
-                        yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
+                        yell(bot, 'all Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
                     reply(manager.raiseEvent(event_name))
                 elif command == '/event report':
                     adminFlag = True

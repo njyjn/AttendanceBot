@@ -33,8 +33,8 @@ def yell(bot, target_and_message, requester):
 	if recipients == None:
 		return('ADMIN: Target invalid.')
 	send_receipt = ''
-	# add sender to message
-	message = manager.getName(requester) + ': ' + message
+	# # add sender to message
+	# message = manager.getName(requester) + ': ' + message
 	for recipient in recipients:
 		try:
 			bot.sendMessage(recipient['chatID'], message)
