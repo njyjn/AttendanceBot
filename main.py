@@ -17,7 +17,8 @@ from settings_secret import TOKEN
 from voglogger import logger
 from headmaster import question_limit, question_bank, question_order, printGrandTally, getCGFinalString
 from tools import rreplace, generateCgRegexPattern
-import authorized, helper, manager, easter, broadcaster
+from broadcaster import yell, dm
+import authorized, helper, manager, easter
 
 class ACGLBOT(telepot.helper.ChatHandler):
 #class ACGLBOT(telepot.Bot):
@@ -51,15 +52,6 @@ class ACGLBOT(telepot.helper.ChatHandler):
             logger.info('Replied \'%s\' to %s' % (reply, chat_id))
             #self.sendMessage(chat_id, reply)
             self.sender.sendMessage(reply)
-
-        def dm(target_id, message):
-            logger.info('%s messaged \'%s\' to %s' % (chat_id, reply, target_id))
-            #self.sendMessage(target_id, message)
-            bot.sendMessage(target_id, message)
-
-        def yell(message):
-            broadcaster.yell('all', message, chat_id) 
-            logger.info('%s yelled by %s.' % message, (str(chat_id)))
 
         def request_add(target_id, message, to_add_cg, to_add_id, to_add_name):
             logger.info('Superadmin attention was requested from %s to %s' % (chat_id, target_id))
@@ -166,16 +158,16 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 elif command == '/event reopen':
                     adminFlag = True
                     reply(manager.reopenEvent())
-                    broadcaster.yell(bot, 'all', 'Attendance taking reopened.', chat_id)
+                    yell(bot, 'all', 'Attendance taking reopened.', chat_id)
                 elif command == '/event end':
                     adminFlag = True
                     reply(manager.forceEndEvent())
-                    broadcaster.yell(bot, 'all', 'What a day it has been! /howmany encountered Him today?', chat_id)
+                    yell(bot, 'all', 'What a day it has been! /howmany encountered Him today?', chat_id)
                 elif command.startswith('/event new'):
                     adminFlag = True
                     event_name = command.replace('/event new ', '')
                     if manager.eventDoesNotExist():
-                        broadcaster.yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
+                        yell(bot, 'all', 'Counting attendance for %s has begun. Get /count -ing' % event_name, chat_id)
                     reply(manager.raiseEvent(event_name))
                 elif command == '/event report':
                     adminFlag = True
@@ -188,9 +180,19 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     reply('/yell what?')
                     return
                 adminFlag = True
-                message = command.replace('/yell ', '')
-                broadcaster.yell(bot, 'all', str(message), chat_id)
-                reply('Message yelled to all.')
+                # message = command.replace('/yell ', '')
+                # broadcaster.yell(bot, 'all', str(message), chat_id)
+                # reply('Message yelled to all.')
+                target_and_message = command.replace('/yell ', '')
+                reply(yell(bot, target_and_message, chat_id))
+
+            elif command.startswith('/dm'):
+                if command == ('/dm'):
+                    reply('/dm to who and what?')
+                    return
+                adminFlag = True
+                target_and_message = command.replace('/dm ', '')
+                reply(dm(bot, target_and_message, chat_id))
 
             if adminFlag == True:
                 reply('System ready.')

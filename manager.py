@@ -9,6 +9,7 @@ import pymongo
 from settings_secret import HOSTNAME
 from authorized import whoIs, number_of_clusters, cg_list, getCluster
 import headmaster
+import re
 
 # establish connection to mongodb server
 try:
@@ -222,33 +223,11 @@ def find(cg, pattern, requester):
 
 # Prepare for yell
 def prepareYell(audience):
-    typeList = ['cgl', 'ps', 'member', 'cr', 'other']
+    # typeList = ['cgl', 'ps', 'member', 'cr', 'other']
     if audience == 'all':
         return cgls.find( {} )
-    elif audience in typeList:
-        pass
-        # yell to types
-        # if students.find( {'type': audience} ) != None:
-        #     recipients = students.find( {'type': audience} )
-
-        #     for recipient in recipients:
-        #         # send to each recipient
-        #         bot.sendMessage(recipient['chatID'], message)
-        # else:
-        #     # no records from audience found
-        #     bot.sendMessage(requester, 'Yell failed: no records found!')
-    elif cgIsValid(audience):
-        pass
-        # yell to house (excluding 'all')
-        # if cgls.find( {'cg': audience} ) != None:
-        #     recipients = students.find( {'color': audience} )
-
-        #     for recipient in recipients:
-        #         # send to each recipient
-        #         bot.sendMessage(recipient['chatID'], message)
-        # else:
-        #     # no records from audience found
-        #     bot.sendMessage(requester, 'Yell failed: no records found!')
+    else:
+        return cgls.find( { 'cg': { '$in': audience } } )
 
 # /updater
 def updater(cg, name, field, content, requester):

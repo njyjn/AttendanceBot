@@ -114,6 +114,9 @@ def getCluster(cg):
 def getClusterFriendlyString(cluster):
     return ''.join(cluster_fs_dictionary.get(cluster))
 
+def getCgs(cluster):
+    return cg_cluster_dictionary.get(cluster)
+
 # """
 #     enumerates all names inside address_book
 #     for /who command

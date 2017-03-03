@@ -1,10 +1,28 @@
-from authorized import cg_list
+from authorized import cg_list, cluster_list
 
 # extract all given cgs in authorized into a regex id pattern
 def generateCgRegexPattern():
 	regex_pattern = '(' 
 	for cg in cg_list:
 		regex_pattern += cg + '|'
+	regex_pattern = rreplace(regex_pattern, '|', ')', 1)
+	return regex_pattern
+
+# extract all given clusters in authorized into a regex id pattern
+def generateClusterRegexPattern():
+	regex_pattern = '(' 
+	for cluster in cluster_list:
+		regex_pattern += cluster + '|'
+	regex_pattern = rreplace(regex_pattern, '|', ')', 1)
+	return regex_pattern
+
+# extract all given clusters and cgs in authorized into a regex id pattern
+def generateCgAndClusterRegexPattern():
+	regex_pattern = '(' 
+	for cg in cg_list:
+		regex_pattern += cg + '|'
+	for cluster in cluster_list:
+		regex_pattern += cluster + '|'
 	regex_pattern = rreplace(regex_pattern, '|', ')', 1)
 	return regex_pattern
 
