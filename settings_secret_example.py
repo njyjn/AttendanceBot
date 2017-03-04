@@ -12,3 +12,6 @@
 """
 
 TOKEN = '1234634650ijsdfgidjijij'
+
+# Use this if you are posting your final count to a Telegram channel.
+UPDATES_CHANNEL = '@channel'

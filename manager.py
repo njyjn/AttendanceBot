@@ -292,18 +292,18 @@ def getEvents():
 def setAttendanceDoneForEvent(cg, isFirstTry):
     logger.info('%s has added its attendance record.' % cg)
     isit = False
-    if lastToSubmitAttendance():
-        isit = True
     # subsequent tries will not increment the tally count, allowing CGs to edit their attendance before all CGs have submitted.
     if isFirstTry:
         events.update_one( { 'done': False }, { '$inc': { 'tally': 1 } } )
+    if lastToSubmitAttendance():
+        isit = True
     return isit
 
 def lastToSubmitAttendance():
     cursor = events.find_one( { 'done': False } )
     #offset for other, pastor, cr, overseer
     #return cursor['tally'] >= (len(cg_list)-1)-len(cg_cluster_dictionary))
-    return cursor['tally'] >= number_of_cgs-1
+    return cursor['tally'] >= number_of_cgs
 
 def submitClusterAttendance(cg):
     cluster = getCluster(cg)
