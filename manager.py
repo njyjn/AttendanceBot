@@ -51,6 +51,7 @@ def cgFieldIsValid(field):
         'f': True, # Freshies
         'v': True, # Visitors
         'nb': True, # New Believers
+        'rd': True, # Rededications
         'total': True, # Total tally
     }
     return fields.get(field, False)
@@ -80,7 +81,7 @@ def makeTimestamp():
 
 # takes in a datetime object and adds count number of days to it
 def daysFrom(dt, count):
-    return timedelta(days=count) + dt 
+    return timedelta(days=count) + dt
 
 # checks database of CGLs to see if they are registered
 def exists(check_id):
@@ -120,9 +121,9 @@ def add(cg, name, chatID):
             return
 
         timestamp = str(datetime.now())
-    
+
         logger.info('Adding \'%s\' from \'%s\' of id %s' % (name, cg, chatID))
-        
+
         cgl = {
             'name': name,
             'cg': [cg, 'all'],
@@ -170,12 +171,12 @@ def getEnumerate(cg, requester):
             reply += target_cg.upper() + '\n\n'
             # query for database cursor
             results = cgls.find( {'cg': target_cg} )
-            
+
             # sort results
             results.sort( [('name', 1)] )
-    
+
             #reply += status.title() + '\n'
-    
+
             # catch empty cg/mode query
             if results.count() == 0:
                 reply += 'No records found.\n'
@@ -204,12 +205,12 @@ def find(cg, pattern, requester):
     if cgIsValid(cg):
         # query for database cursor
         results = cgls.find( {'name': { '$regex': '.*' + pattern + '.*'}, 'cg': cg } )
-    
+
         # sort results
         results.sort( [ ('name', 1) ] )
 
         details = ['name', 'chatID']
-    
+
         # build the reply
         reply += 'Finding any names containing \'%s\' for \'%s\'\n\n' % (pattern, cg)
         reply += enumerator(results, details)
@@ -281,7 +282,7 @@ def forceDeleteEvent():
 
 # reopen done event
 def reopenEvent():
-    event_name = events.find( {} )[0]['name'] 
+    event_name = events.find( {} )[0]['name']
     events.update_one( { 'done': True }, { '$set': { 'done': False } } )
     return 'Attendance event \'%s\' reopened. Now accepting /count commands.' % event_name
 
@@ -340,7 +341,7 @@ def reset():
 # This will update the total attendance for the cluster.
 def updateClusterAttendance(cluster):
     cgList = cgs.find( {'cluster': cluster} )
-    total = totalL = totalF = totalIR = totalNC = totalNB = totalV = 0
+    total = totalL = totalF = totalIR = totalNC = totalNB = totalRD = totalV = 0
     for cg in cgList:
         total += int(cg.get('total', 0))
         totalL += int(cg.get('l', 0))
@@ -348,8 +349,9 @@ def updateClusterAttendance(cluster):
         totalIR += int(cg.get('ir', 0))
         totalNC += int(cg.get('nc', 0))
         totalNB += int(cg.get('nb', 0))
+        totalRD += int(cg.get('rd', 0))
         totalV += int(cg.get('v', 0))
-    tally.update_one( { 'cluster': cluster }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } }, upsert=True )
+    tally.update_one( { 'cluster': cluster }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'rd': totalRD, 'v': totalV } }, upsert=True )
 
 def updateTotalAttendance():
     clusterList = tally.find( { 'cluster': { '$ne': 'all'} } )
@@ -364,5 +366,6 @@ def updateTotalAttendance():
         totalIR += int(cluster.get('ir', 0))
         totalNC += int(cluster.get('nc', 0))
         totalNB += int(cluster.get('nb', 0))
+        totalRD += int(cluster.get('rd', 0))
         totalV += int(cluster.get('v', 0))
-    tally.update_one( { 'cluster': 'all' }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'v': totalV } }, upsert=True )
+    tally.update_one( { 'cluster': 'all' }, { '$set': { 'total': total, 'l': totalL, 'f': totalF, 'ir': totalIR, 'nc': totalNC, 'nb': totalNB, 'rd': totalRD, 'v': totalV } }, upsert=True )

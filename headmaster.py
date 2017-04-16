@@ -40,15 +40,17 @@ def getFinalString(cgDoc, cg=None, clusterFS=None):
         freshies = str(cgDoc.get('f', ''))
         ncs = str(cgDoc.get('nc', ''))
         nbs = str(cgDoc.get('nb', ''))
+        rds = str(cgDoc.get('rd', ''))
         irs = str(cgDoc.get('ir', ''))
         visitors = str(cgDoc.get('v', ''))
         # Add suffixes only if count is non-zero
         freshies = '' if freshies in ('','0') else freshies+'F, '
         ncs = '' if ncs in ('','0') else ncs+'NC, '
+        rds = '' if rds in ('','0') else rds+'RD 🎉, '
         nbs = '' if nbs in ('','0') else nbs+'NB 🎉, '
         irs = '' if irs in ('','0') else irs+'IR, '
         visitors = '' if visitors in ('','0') else visitors+'V, '
-        string = freshies + irs + ncs + visitors + nbs
+        string = freshies + irs + ncs + visitors + nbs + rds
         # Rid last comma
         string = rreplace(string, ', ', '', 1)
     # Blank clusterFS means the CG is querying this method for its tally string.
@@ -69,7 +71,7 @@ def getFinalString(cgDoc, cg=None, clusterFS=None):
 
 def printGrandTally():
     eventName = getEventName()
-    
+
     northTotal = getFinalString(tally.find_one( {'cluster': 'jcn'} ), None, 'jcn')
     ajyj = getCGFinalString('aj/yj')
     sr = getCGFinalString('sr')
@@ -110,6 +112,6 @@ def printGrandTally():
     ibcg = getCGFinalString('ibcg')
     westa = '%s\n%s\n%s\n' % (ac, ibcg, westAcibTotal)
 
-    jcTotal = getFinalString(tally.find_one( {'cluster': 'all'} ), None, 'all') 
+    jcTotal = getFinalString(tally.find_one( {'cluster': 'all'} ), None, 'all')
 
     return '%s\n\n%s\n%s\n%s\n%s\n%s\n%s' % (eventName, north, south, east, westu, westa, jcTotal)
