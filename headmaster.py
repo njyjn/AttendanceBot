@@ -6,13 +6,14 @@ question_bank = {
 	'total': 'How many youths came today, total?',
 	'l': 'How many servers including yourself?',
 	'f':'How many (F)reshies?',
+    'rd': 'How many (R)e-(D)edications?',
 	'nb':'How many (N)ew (B)elievers?',
 	'nc':'How many (N)ew (C)omers?',
 	'v':'How many (V)isitors?',
 	'ir': 'How many (IR)regulars?',
 }
 
-question_order = ['total', 'l', 'f', 'ir', 'nb', 'nc', 'v',]
+question_order = ['total', 'l', 'f', 'ir', 'rd', 'nb', 'nc', 'v',]
 
 question_limit = len(question_order)
 
