@@ -358,7 +358,7 @@ def updateTotalAttendance():
     # Only bother if all clusters have submitted attendance
     if clusterList.count() < number_of_clusters - 1:
         return
-    total = totalL = totalF = totalIR = totalNC = totalNB = totalV = 0
+    total = totalL = totalF = totalIR = totalNC = totalNB = totalRD = totalV = 0
     for cluster in clusterList:
         total += int(cluster.get('total', 0))
         totalL += int(cluster.get('l', 0))
