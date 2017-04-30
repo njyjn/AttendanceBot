@@ -49,6 +49,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
 
         # To save time
         def reply(reply):
+            reply = reply.encode('utf-8')
             logger.info('Replied \'%s\' to %s' % (reply, chat_id))
             #self.sendMessage(chat_id, reply)
             self.sender.sendMessage(reply)
