@@ -26,7 +26,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
         super(ACGLBOT, self).__init__(*args, **kwargs)
         self._answerer = telepot.helper.Answerer(self)
         self._message_with_inline_keyboard = None
-        
+
         # for headmaster
         self._progress = 0
         self._query_cg = None
@@ -66,9 +66,9 @@ class ACGLBOT(telepot.helper.ChatHandler):
         if chat_id < 0:
             return
 
-        # Return a system ready flag to the admin when the command is complete.    
+        # Return a system ready flag to the admin when the command is complete.
         adminFlag = False
-        
+
         # ================================ COMMANDS FOR ADMINS
         # This is for superadministrators.
         if authorized.isSuperadmin(chat_id):
@@ -101,7 +101,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
             if command == '/admin':
                 adminFlag = True
                 reply('You are an admin. Commands available:\n/admin - View this\n/yell AUDIENCE: MSG\n/ls - Show all users in database\n/find FROM NAME - Show list of names you are finding.\n/update HOUSE NAME FIELD PARAM\n/purge HOUSE NAME\n/scoreb - Show scoreboard\n/award HOUSE POINTS')
-            
+
             elif command.startswith('/add'):
                 cg_regex_pattern = generateCgRegexPattern()
                 regex_pattern = '\/add\s+' + str(cg_regex_pattern) + '\s+([0-9]+)\s+([a-zA-Z ]+)'
@@ -113,7 +113,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     cg = matches.group(1)
                     target_id = matches.group(2)
                     name = matches.group(3)
-                    added_message = 'Attempting to register %s (%s) into %s.' % (target_id, name, cg) 
+                    added_message = 'Attempting to register %s (%s) into %s.' % (target_id, name, cg)
                     logger.info(added_message)
                     bot.sendMessage(target_id, manager.add(cg.lower(), name.title(), target_id))
                     logger.info('Succesfully registered %s (%s) into %s.' % (target_id, name, cg))
@@ -129,7 +129,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     adminFlag = True
                     house, name, field, content = re.match('/update\s+([a-zA-Z]+)\s+([a-zA-Z\s]+)\s+(name|type)\s+([a-zA-Z]+)\s*' ,command).groups()
                     reply(manager.updater(house.lower(), name.title(), field.lower(), content.lower(), chat_id))
-            
+
             elif command.startswith('/ls'):
                 if command == '/ls':
                     reply('Did you mean /ls la?\n\nla: List all users\ncg: List all users in cg')
@@ -141,7 +141,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     adminFlag = True
                     cg = re.match('/ls\s([a-zA-Z]+)', command).group(1).lower()
                     reply(manager.getEnumerate(cg, chat_id))
-            
+
             elif command.startswith('/find'):
                 if command == '/find':
                     reply('Enter search params!')
@@ -199,7 +199,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
             if adminFlag == True:
                 reply('System ready.')
                 return
-        
+
         # /24601
         if command == '/24601':
             reply(str(chat_id))
@@ -216,7 +216,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
             else:
                 reply('You cannot stop what you did not begin.')
             return
-        
+
         # ================================ COMMANDS FOR REGISTERED USERS
         # This is for registered participants
         if authorized.isRegistered(chat_id):
@@ -240,7 +240,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                     count = int(command)
                     if count < 0:
                         raise Exception('Think positive only.')
-                    manager.updateAttendance(self._query_cg, question_order[self._progress], count) 
+                    manager.updateAttendance(self._query_cg, question_order[self._progress], count)
                 except Exception as e:
                     reply(str(e))
                     reply('Your data is corrupted. Please restart /count.')
@@ -287,7 +287,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
                         reply('No one is counting attendance now. You may wish to do other productive things.')
                 else:
                     reply(easter.responseHandler(command))
-        
+
         # ================================ COMMANDS FOR UNREGISTERED USERS
         # for '/start'
         elif command == '/start':
@@ -310,11 +310,11 @@ class ACGLBOT(telepot.helper.ChatHandler):
                 request_message = '%s (%s) from %s, %s wants to register.' % (chat_id, name, cluster, cg)
                 logger.info(request_message)
                 reply('Hello, %s!' % name)
-                
+
                 # ask rep to approve registration
                 request_add(authorized.superadmin, request_message, cg, name, chat_id)
                 request_add(approver_id, request_message, cg, name, chat_id)
-                reply('Your request was sent to your cluster rep (JC %s) for approval. If you do not hear back within a minute, try again.' % authorized.getClusterFriendlyString(cluster)) 
+                reply('Your request was sent to your cluster rep (JC %s) for approval. If you do not hear back within a minute, try again.' % authorized.getClusterFriendlyString(cluster))
 
         # otherwise it must be trying to talk to ARIADNE!
         else:

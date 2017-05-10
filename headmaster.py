@@ -109,8 +109,9 @@ def printGrandTally():
 
     westAcibTotal = getFinalString(tally.find_one( {'cluster': 'jcwa'} ), None, 'jcwal')
     ac = getCGFinalString('ac')
+    acc = getCGFinalString('a(c)')
     ibcg = getCGFinalString('ibcg')
-    westa = '%s\n%s\n%s\n' % (ac, ibcg, westAcibTotal)
+    westa = '%s\n%s\n%s\n%s\n' % (ac, acc, ibcg, westAcibTotal)
 
     jcTotal = getFinalString(tally.find_one( {'cluster': 'all'} ), None, 'all')
 

@@ -9,14 +9,14 @@ superadmin = 87244565
 # dictionary for Telegram chat IDs
 address_book = {
     # admin (approvals)
-    'Justin'    : 87244565,     # 
+    'Justin'    : 87244565,     #
     'Justin2'   : 175212803,
     'other'     : 87244565,     # superadmin approves cr, overseer,
     'jce'       : 62199558,     # choy
     'jcs'       : 46683864,     # sherry
     'jcn'       : 41625478,     # ernest
     'jcn2'      : 62186950,     # janie
-    'jcwu'      : 72510072,     # yongde 
+    'jcwu'      : 72510072,     # yongde
     'jcwa'      : 36329885,     # allinda
     'Test-Group': 0,
 }
@@ -38,7 +38,7 @@ cg_cluster_dictionary = {
     'jcs': ['cj a', 'cj b', 'cj c', 'sa a', 'sa b'],
     'jcn': ['aj/yj', 'sr', 'ny/ej', 'rja', 'rjb/sji', 'rjc', 'ij'],
     'jcwu': ['pj/jj','hc','nj'],
-    'jcwa': ['ac','ibcg'],
+    'jcwa': ['ac','a(c)','ibcg'],
     'other': ['overseer', 'pastor', 'cr', 'other'],
 }
 cluster_list = cg_cluster_dictionary.keys()
@@ -70,7 +70,7 @@ cluster_fs_dictionary = {
 #     lists = [getIDs(groups.get(group)) for group in groupList if group in groups]
 #     return [item for sublist in lists for item in sublist]
 
-""" 
+"""
     verifies if chat ID is superadmin
 """
 def isSuperadmin(chat_id):
@@ -88,7 +88,7 @@ def isAdmin(chat_id):
     verifies if chat ID is registered
 """
 def isRegistered(check_id):
-    return manager.exists(check_id) 
+    return manager.exists(check_id)
 
 
 """
