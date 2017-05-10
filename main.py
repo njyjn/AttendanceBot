@@ -297,6 +297,7 @@ class ACGLBOT(telepot.helper.ChatHandler):
         elif command.startswith('/start'):
             cg_regex_pattern = generateCgRegexPattern()
             regex_pattern = '\/start\s+([a-zA-Z ]+)\s+' + str(cg_regex_pattern)
+            print(cg_regex_pattern)
             matches = re.match(regex_pattern, command, re.IGNORECASE)
             if matches is None:
                 reply('Either you did not follow the appropriate format: \'/start Your Name CG\' or you did not use the correct CG code. (/cg)')
