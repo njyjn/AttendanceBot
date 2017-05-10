@@ -2,15 +2,16 @@ from authorized import cg_list, cluster_list
 
 # extract all given cgs in authorized into a regex id pattern
 def generateCgRegexPattern():
-	regex_pattern = '(' 
+	regex_pattern = '('
 	for cg in cg_list:
+		cg = bracketize(cg)
 		regex_pattern += cg + '|'
 	regex_pattern = rreplace(regex_pattern, '|', ')', 1)
 	return regex_pattern
 
 # extract all given clusters in authorized into a regex id pattern
 def generateClusterRegexPattern():
-	regex_pattern = '(' 
+	regex_pattern = '('
 	for cluster in cluster_list:
 		regex_pattern += cluster + '|'
 	regex_pattern = rreplace(regex_pattern, '|', ')', 1)
@@ -18,7 +19,7 @@ def generateClusterRegexPattern():
 
 # extract all given clusters and cgs in authorized into a regex id pattern
 def generateCgAndClusterRegexPattern():
-	regex_pattern = '(' 
+	regex_pattern = '('
 	for cg in cg_list:
 		regex_pattern += cg + '|'
 	for cluster in cluster_list:
@@ -39,3 +40,12 @@ def groupArg2List(groupList):
         return [groupList]
     else:
         return re.split('\s*+\s*', groupList)
+
+# This function prepends '\' to '(' or ')' for regex matching of CGs with brackets in name.
+def bracketize(cg):
+	if '(' in cg or ')' in cg:
+		bracketOpenIndex = cg.find('(')
+		bracketCloseIndex = cg.find(')')
+		cg = cg[:bracketOpenIndex] + '\\' + cg[bracketOpenIndex:]
+		cg = cg[:bracketCloseIndex+1] + '\\' + cg[bracketCloseIndex+1:]
+	return cg
